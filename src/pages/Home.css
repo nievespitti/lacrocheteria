@@ -6,14 +6,25 @@
 
 .hero__inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 56px;
-  min-height: calc(100vh - 68px - 176px);
+  text-align: center;
+  gap: 0;
+  min-height: calc(100vh - 80px - 176px);
+  padding-top: 16px;
 }
 
-.hero__content {
-  flex: 1;
-  max-width: 560px;
+.hero__logo {
+  width: 340px;
+  max-width: 80vw;
+  height: auto;
+  margin-bottom: 8px;
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
 .hero__badge {
@@ -26,7 +37,7 @@
   text-transform: uppercase;
   padding: 7px 18px;
   border-radius: 2px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   border: 1px solid rgba(196, 118, 74, 0.25);
 }
 
@@ -42,33 +53,14 @@
   color: var(--color-text-muted);
   line-height: 1.75;
   margin-bottom: 40px;
-  max-width: 480px;
+  max-width: 560px;
 }
 
 .hero__actions {
   display: flex;
   gap: 14px;
   flex-wrap: wrap;
-}
-
-.hero__visual {
-  flex: 1;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  max-width: 440px;
-}
-
-.hero__svg {
-  width: 100%;
-  max-width: 380px;
-  height: auto;
-  animation: float 7s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-18px); }
 }
 
 /* === SERVICIOS === */
@@ -161,26 +153,12 @@
 
 @media (max-width: 768px) {
   .hero__inner {
-    flex-direction: column-reverse;
     min-height: auto;
-    gap: 32px;
-    text-align: center;
+    padding-top: 8px;
   }
 
-  .hero__content {
-    max-width: 100%;
-  }
-
-  .hero__subtitle {
-    max-width: 100%;
-  }
-
-  .hero__visual {
-    max-width: 260px;
-  }
-
-  .hero__actions {
-    justify-content: center;
+  .hero__logo {
+    width: 260px;
   }
 
   .servicios-grid {

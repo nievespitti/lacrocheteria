@@ -5,6 +5,7 @@ import './Header.css'
 const links = [
   { to: '/', label: 'Inicio' },
   { to: '/galeria', label: 'Galería' },
+  { to: '/disenador', label: '✦ Diseñador' },
   { to: '/sobre-nosotras', label: 'Sobre Nosotras' },
   { to: '/contacto', label: 'Contacto' },
 ]
@@ -25,8 +26,7 @@ export default function Header() {
     <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
       <div className="header__inner">
         <Link to="/" className="header__logo" onClick={closeMenu}>
-          <LogoIcon />
-          <span className="header__logo-text">La CrocheterIA</span>
+          <img src="/logo00.png" alt="La CrocheterIA" className="header__logo-img" />
         </Link>
 
         <nav className={`header__nav${menuOpen ? ' header__nav--open' : ''}`}>
@@ -43,6 +43,15 @@ export default function Header() {
               {link.label}
             </NavLink>
           ))}
+          <a
+            href="https://notebooklm.google.com/notebook/6deea074-1085-4244-9369-25dc95addbef"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="header__biblia-btn"
+            onClick={closeMenu}
+          >
+            📖 Biblia del Crochet
+          </a>
         </nav>
 
         <button
@@ -57,16 +66,5 @@ export default function Header() {
         </button>
       </div>
     </header>
-  )
-}
-
-function LogoIcon() {
-  return (
-    <svg className="header__logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <circle cx="24" cy="16" r="9" stroke="#E98074" strokeWidth="2.5" fill="none" />
-      <path d="M15 16 Q19 11 24 16 Q29 21 24 26" stroke="#E98074" strokeWidth="1.8" fill="none" strokeLinecap="round" />
-      <line x1="10" y1="34" x2="17" y2="16" stroke="#007A7A" strokeWidth="3" strokeLinecap="round" />
-      <path d="M17 16 C17 13 13 11 11 12" stroke="#007A7A" strokeWidth="3" strokeLinecap="round" fill="none" />
-    </svg>
   )
 }

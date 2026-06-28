@@ -57,22 +57,18 @@ export default function Home() {
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">
-          <div className="hero__content">
-            <span className="hero__badge">✨ Ganchillo + Inteligencia Artificial</span>
-            <h1 className="hero__title">
-              Crochet moderno<br />con alma artesanal
-            </h1>
-            <p className="hero__subtitle">
-              Patrones exclusivos, tutoriales en profundidad y un asistente de IA para
-              acompañarte en cada punto. Bienvenida a tu nuevo rincón de ganchillo.
-            </p>
-            <div className="hero__actions">
-              <Button as={Link} to="/galeria" variant="primary">Ver galería</Button>
-              <Button as={Link} to="/contacto" variant="secondary">Escríbenos</Button>
-            </div>
-          </div>
-          <div className="hero__visual" aria-hidden="true">
-            <HeroIllustration />
+          <img src="/logo00.png" alt="La CrocheterIA" className="hero__logo" />
+          <span className="hero__badge">✨ Ganchillo + Inteligencia Artificial</span>
+          <h1 className="hero__title">
+            Crochet moderno<br />con alma artesanal
+          </h1>
+          <p className="hero__subtitle">
+            Patrones exclusivos, tutoriales en profundidad y un asistente de IA para
+            acompañarte en cada punto. Bienvenida a tu nuevo rincón de ganchillo.
+          </p>
+          <div className="hero__actions">
+            <Button as={Link} to="/galeria" variant="primary">Ver galería</Button>
+            <Button as={Link} to="/contacto" variant="secondary">Escríbenos</Button>
           </div>
         </div>
       </section>
@@ -128,43 +124,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  )
-}
-
-function HeroIllustration() {
-  return (
-    <svg className="hero__svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-      {/* Fondo suave */}
-      <circle cx="200" cy="200" r="155" fill="#C4764A" opacity="0.06" />
-
-      {/* Ovillo de lana — capas */}
-      <circle cx="200" cy="210" r="115" fill="#C4764A" opacity="0.09" />
-      <circle cx="200" cy="210" r="90" fill="none" stroke="#C4764A" strokeWidth="2.5" opacity="0.2" />
-      <ellipse cx="200" cy="210" rx="90" ry="32" fill="none" stroke="#C4764A" strokeWidth="2" opacity="0.35" />
-      <ellipse cx="200" cy="210" rx="90" ry="32" fill="none" stroke="#C4764A" strokeWidth="2" opacity="0.35"
-        transform="rotate(55 200 210)" />
-      <ellipse cx="200" cy="210" rx="90" ry="32" fill="none" stroke="#C4764A" strokeWidth="2" opacity="0.35"
-        transform="rotate(110 200 210)" />
-      <circle cx="200" cy="210" r="90" fill="none" stroke="#C4764A" strokeWidth="4" />
-
-      {/* Hilo suelto */}
-      <path d="M200 120 Q230 80 280 90" fill="none" stroke="#C4764A" strokeWidth="2.5" strokeLinecap="round" opacity="0.5" />
-
-      {/* Ganchillo */}
-      <line x1="295" y1="65" x2="180" y2="210" stroke="#6B7F5E" strokeWidth="7" strokeLinecap="round" />
-      <path d="M180 210 C168 222, 163 235, 175 244 C187 253, 199 240, 188 228"
-        fill="none" stroke="#6B7F5E" strokeWidth="6" strokeLinecap="round" />
-
-      {/* Puntos decorativos */}
-      <circle cx="110" cy="130" r="6" fill="#E8D5C4" opacity="0.9" />
-      <circle cx="300" cy="310" r="8" fill="#6B7F5E" opacity="0.4" />
-      <circle cx="75" cy="290" r="4" fill="#C4764A" opacity="0.4" />
-      <circle cx="330" cy="155" r="4" fill="#E8D5C4" opacity="0.8" />
-      <circle cx="150" cy="340" r="5" fill="#6B7F5E" opacity="0.35" />
-
-      {/* Motivo floral simple */}
-      <circle cx="308" cy="88" r="5" fill="#E8D5C4" opacity="0.7" />
-      <circle cx="315" cy="82" r="3" fill="#C4764A" opacity="0.5" />
-    </svg>
   )
 }
