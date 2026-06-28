@@ -1,6 +1,9 @@
 /* === HERO === */
 .hero {
-  padding: 80px 24px 96px;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  padding: 60px 24px;
   overflow: hidden;
 }
 
@@ -10,15 +13,15 @@
   align-items: center;
   text-align: center;
   gap: 0;
-  min-height: calc(100vh - 80px - 176px);
-  padding-top: 16px;
+  width: 100%;
+  padding-top: 0;
 }
 
 .hero__logo {
-  width: 340px;
-  max-width: 80vw;
+  width: 480px;
+  max-width: 85vw;
   height: auto;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   animation: float 7s ease-in-out infinite;
 }
 
@@ -153,12 +156,11 @@
 
 @media (max-width: 768px) {
   .hero__inner {
-    min-height: auto;
     padding-top: 8px;
   }
 
   .hero__logo {
-    width: 260px;
+    width: 300px;
   }
 
   .servicios-grid {
