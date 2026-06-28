@@ -1,68 +1,149 @@
+/* === VARIABLES === */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Jost', system-ui, sans-serif;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --color-background: #F2EBE1;
+  --color-surface: #E8DDD1;
+  --color-text: #2C2416;
+  --color-text-muted: #7A6A58;
+  --color-accent: #C4764A;
+  --color-accent-hover: #A85F35;
+  --color-sage: #6B7F5E;
+  --color-linen: #E8D5C4;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --shadow-sm: 0 2px 8px rgba(44, 36, 22, 0.06);
+  --shadow-md: 0 8px 24px rgba(44, 36, 22, 0.10);
+  --shadow-lg: 0 20px 48px rgba(44, 36, 22, 0.12);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* === RESET === */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  line-height: 1.6;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  margin-top: 0;
+  letter-spacing: 0.01em;
+}
+
+p {
+  margin-top: 0;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* === LAYOUT GLOBAL === */
+.site-wrapper {
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.site-main {
+  flex: 1;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* === SECTIONS === */
+.section {
+  padding: 96px 24px;
+}
+
+.section--light {
+  background: #fff;
+}
+
+.section--warm {
+  background: var(--color-surface);
+}
+
+.section--accent {
+  background: var(--color-accent);
+}
+
+.section--accent h2,
+.section--accent p {
+  color: #fff;
+}
+
+.section__header {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 56px;
+}
+
+.section__header h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  margin-bottom: 16px;
+}
+
+.section__header p {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.section--accent .section__header p {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.section__cta {
+  text-align: center;
+  margin-top: 48px;
+}
+
+/* === PAGE HEROES (cabeceras de página interior) === */
+.page-hero {
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.page-hero--terracota { background: var(--color-accent); }
+.page-hero--sage      { background: var(--color-sage); }
+.page-hero--linen     { background: var(--color-surface); color: var(--color-text); }
+
+.page-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.page-hero p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 500px;
+  margin: 0 auto;
 }
