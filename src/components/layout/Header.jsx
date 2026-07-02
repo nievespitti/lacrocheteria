@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import './Header.css'
 
 const links = [
@@ -14,6 +15,8 @@ const links = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { user, loading, signOut } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -22,6 +25,12 @@ export default function Header() {
   }, [])
 
   const closeMenu = () => setMenuOpen(false)
+
+  const handleSignOut = async () => {
+    await signOut()
+    closeMenu()
+    navigate('/')
+  }
 
   return (
     <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
@@ -53,6 +62,23 @@ export default function Header() {
           >
             📖 Biblia del Crochet
           </a>
+
+          {!loading && (
+            user ? (
+              <div className="header__auth">
+                <span className="header__username">
+                  {user.email.split('@')[0]}
+                </span>
+                <button onClick={handleSignOut} className="header__logout">
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="header__login-btn" onClick={closeMenu}>
+                Entrar
+              </Link>
+            )
+          )}
         </nav>
 
         <button
