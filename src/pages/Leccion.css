@@ -139,28 +139,12 @@
   overflow: hidden;
 }
 
-.leccion__imagen-placeholder {
+.leccion__imagen {
+  width: 100%;
   aspect-ratio: 16 / 7;
-  background: var(--color-surface);
+  object-fit: cover;
+  display: block;
   border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  border: 2px dashed var(--color-linen);
-}
-
-.leccion__imagen-placeholder span {
-  font-size: 2rem;
-  opacity: 0.5;
-}
-
-.leccion__imagen-placeholder p {
-  font-size: 0.78rem;
-  color: var(--color-text-muted);
-  font-family: monospace;
-  margin: 0;
 }
 
 /* === TEXTO === */

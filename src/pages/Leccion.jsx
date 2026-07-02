@@ -49,12 +49,15 @@ export default function Leccion() {
           <h1 className="leccion__titulo">{leccion.titulo}</h1>
 
           {/* IMAGEN */}
-          <div className="leccion__imagen-wrapper">
-            <div className="leccion__imagen-placeholder">
-              <span>📷</span>
-              <p>{leccion.imagen_url.split('/').pop()}</p>
+          {leccion.imagen_url && (
+            <div className="leccion__imagen-wrapper">
+              <img
+                src={leccion.imagen_url}
+                alt={leccion.titulo}
+                className="leccion__imagen"
+              />
             </div>
-          </div>
+          )}
 
           {/* TEXTO */}
           <div className="leccion__texto">

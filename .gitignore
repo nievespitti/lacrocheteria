@@ -28,3 +28,6 @@ dist-ssr
 .vercel
 
 .vercel
+
+# Claude Code local settings
+.claude/
