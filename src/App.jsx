@@ -11,6 +11,7 @@ import Aprender from './pages/Aprender'
 import Leccion from './pages/Leccion'
 import Login from './pages/Login'
 import Registro from './pages/Registro'
+import AsistenteIA from './pages/AsistenteIA'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/disenador" element={<Disenador />} />
             <Route path="/aprender" element={<Aprender />} />
             <Route path="/aprender/:nivelId/:leccionId" element={<Leccion />} />
+            <Route path="/asistente" element={<AsistenteIA />} />
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
           </Routes>
