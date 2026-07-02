@@ -67,7 +67,7 @@ export default function Header() {
             user ? (
               <div className="header__auth">
                 <span className="header__username">
-                  {user.email.split('@')[0]}
+                  {user.user_metadata?.nombre || user.email.split('@')[0]}
                 </span>
                 <button onClick={handleSignOut} className="header__logout">
                   Salir

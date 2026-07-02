@@ -5,6 +5,7 @@ import './Auth.css'
 
 export default function Registro() {
   const { signUp } = useAuth()
+  const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -16,11 +17,12 @@ export default function Registro() {
     e.preventDefault()
     setError('')
 
+    if (!nombre.trim()) return setError('Escribe tu nombre.')
     if (password !== confirm) return setError('Las contraseñas no coinciden.')
     if (password.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.')
 
     setLoading(true)
-    const { error } = await signUp(email, password)
+    const { error } = await signUp(email, password, nombre.trim())
 
     if (error) {
       setError(traducirError(error.message))
@@ -61,6 +63,19 @@ export default function Registro() {
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <div className="auth-error">{error}</div>}
+
+          <div className="auth-field">
+            <label htmlFor="nombre">Tu nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              value={nombre}
+              onChange={e => setNombre(e.target.value)}
+              required
+              placeholder="María García"
+              autoComplete="name"
+            />
+          </div>
 
           <div className="auth-field">
             <label htmlFor="email">Correo electrónico</label>
