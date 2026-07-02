@@ -1,0 +1,141 @@
+/* === HERO === */
+.aprender-hero__badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* === GRID DE NIVELES === */
+.niveles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+/* === NIVEL CARD === */
+.nivel-card {
+  background: var(--color-background);
+  border-radius: 20px;
+  padding: 40px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-top: 5px solid transparent;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.nivel-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-md);
+}
+
+.nivel-card--sage      { border-top-color: var(--color-sage); }
+.nivel-card--terracota { border-top-color: var(--color-accent); }
+.nivel-card--dorado    { border-top-color: #C9A96E; }
+
+.nivel-card__icono {
+  font-size: 2.4rem;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.nivel-card__nombre {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: var(--color-text);
+}
+
+.nivel-card__descripcion {
+  font-size: 0.94rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.nivel-card__count {
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 24px;
+}
+
+.nivel-card__btn {
+  display: inline-block;
+  padding: 11px 24px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.nivel-card__btn--activo {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.nivel-card__btn--activo:hover {
+  background: var(--color-accent-hover);
+  color: #fff;
+}
+
+.nivel-card--sage .nivel-card__btn--activo {
+  background: var(--color-sage);
+}
+
+.nivel-card--sage .nivel-card__btn--activo:hover {
+  background: #56674B;
+}
+
+.nivel-card--dorado .nivel-card__btn--activo {
+  background: #C9A96E;
+}
+
+.nivel-card__btn--pronto {
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+  .niveles-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .niveles-grid .nivel-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 440px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .niveles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .niveles-grid .nivel-card:last-child {
+    grid-column: auto;
+    max-width: none;
+  }
+
+  .nivel-card {
+    padding: 28px 24px;
+  }
+}

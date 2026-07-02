@@ -4,6 +4,7 @@ import './Header.css'
 
 const links = [
   { to: '/', label: 'Inicio' },
+  { to: '/aprender', label: 'Aprende' },
   { to: '/galeria', label: 'Galería' },
   { to: '/disenador', label: '✦ Diseñador' },
   { to: '/sobre-nosotras', label: 'Sobre Nosotras' },
