@@ -24,6 +24,14 @@
   transition: transform 0.4s ease;
 }
 
+.card__image-wrap--video {
+  background: var(--color-background);
+}
+
+.card__image--video {
+  object-fit: contain;
+}
+
 .card:hover .card__image {
   transform: scale(1.05);
 }
@@ -32,7 +40,7 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background: var(--color-accent-coral);
+  background: var(--color-accent);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -52,7 +60,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-accent-teal);
+  color: var(--color-sage);
   margin-bottom: 6px;
 }
 

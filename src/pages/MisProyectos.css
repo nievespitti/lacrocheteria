@@ -42,6 +42,19 @@
   flex-wrap: wrap;
 }
 
+.proyecto-card__info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.proyecto-thumb {
+  width: 72px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-linen);
+  background: var(--color-background);
+}
+
 .proyecto-card__title {
   font-family: var(--font-heading);
   font-size: 1.2rem;

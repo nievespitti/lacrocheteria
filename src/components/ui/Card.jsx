@@ -1,11 +1,17 @@
 import './Card.css'
 
 export default function Card({ image, title, subtitle, description, badge, children }) {
+  const esVideo = typeof image === 'string' && image.toLowerCase().endsWith('.mp4')
+
   return (
     <article className="card">
       {image && (
-        <div className="card__image-wrap">
-          <img src={image} alt={title || ''} className="card__image" loading="lazy" />
+        <div className={`card__image-wrap${esVideo ? ' card__image-wrap--video' : ''}`}>
+          {esVideo ? (
+            <video src={image} className="card__image card__image--video" autoPlay muted loop playsInline />
+          ) : (
+            <img src={image} alt={title || ''} className="card__image" loading="lazy" />
+          )}
           {badge && <span className="card__badge">{badge}</span>}
         </div>
       )}

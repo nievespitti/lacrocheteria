@@ -4,9 +4,9 @@
 }
 
 .footer__inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 64px 24px 40px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 64px 48px 40px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
@@ -40,40 +40,28 @@
 
 .footer__nav {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .footer__nav a,
 .footer__contact a {
-  display: inline-flex;
-  align-items: center;
   color: rgba(250, 247, 240, 0.92);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 500;
   text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  transition: color 0.2s ease;
 }
 
 .footer__nav a:hover,
 .footer__contact a:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
-  transform: translateY(-2px);
+  color: var(--color-accent);
 }
 
 .footer__contact {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .footer__bottom {

@@ -36,6 +36,25 @@ function TarjetaPatron({ proyecto, onBorrar }) {
   )
 }
 
+function MiniaturaDiseno({ grid, rows, cols }) {
+  return (
+    <svg
+      viewBox={`0 0 ${cols} ${rows}`}
+      preserveAspectRatio="none"
+      className="proyecto-thumb"
+      style={{ aspectRatio: `${cols} / ${rows}` }}
+      aria-hidden="true"
+    >
+      <rect width={cols} height={rows} fill="var(--color-linen)" />
+      {grid.map((row, r) =>
+        row.map((c, col) =>
+          c.stitch ? <rect key={`${r}-${col}`} x={col} y={r} width={1} height={1} fill={c.color} /> : null
+        )
+      )}
+    </svg>
+  )
+}
+
 function TarjetaDiseno({ proyecto, onBorrar }) {
   const navigate = useNavigate()
   const { rows, cols, grid } = proyecto.contenido
@@ -44,9 +63,12 @@ function TarjetaDiseno({ proyecto, onBorrar }) {
   return (
     <div className="proyecto-card">
       <div className="proyecto-card__header">
-        <div>
-          <h3 className="proyecto-card__title">{proyecto.titulo}</h3>
-          <p className="proyecto-card__meta">{rows} × {cols} · {puntos} puntos · {formatearFecha(proyecto.created_at)}</p>
+        <div className="proyecto-card__info">
+          <MiniaturaDiseno grid={grid} rows={rows} cols={cols} />
+          <div>
+            <h3 className="proyecto-card__title">{proyecto.titulo}</h3>
+            <p className="proyecto-card__meta">{rows} × {cols} · {puntos} puntos · {formatearFecha(proyecto.created_at)}</p>
+          </div>
         </div>
         <div className="proyecto-card__actions">
           <button
@@ -99,7 +121,7 @@ export default function MisProyectos() {
 
   return (
     <div className="mis-proyectos-page">
-      <div className="page-hero page-hero--linen">
+      <div className="page-hero page-hero--terracota">
         <div className="container">
           <h1>Mis Proyectos</h1>
           <p>Tus patrones generados y diseños guardados, siempre a mano.</p>
