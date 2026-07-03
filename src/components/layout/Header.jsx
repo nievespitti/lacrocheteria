@@ -51,7 +51,7 @@ export default function Header() {
               }
               onClick={closeMenu}
             >
-              {link.label}
+              <span className="header__link-label">{link.label}</span>
             </NavLink>
           ))}
           <a

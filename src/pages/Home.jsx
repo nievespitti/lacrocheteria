@@ -57,7 +57,7 @@ export default function Home() {
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">
-          <img src="/logo00.png" alt="La CrocheterIA" className="hero__logo" />
+          <img src="/logo3d_final.png" alt="La CrocheterIA" className="hero__logo" />
           <span className="hero__badge">✨ Ganchillo + Inteligencia Artificial</span>
           <h1 className="hero__title">
             Crochet moderno<br />con alma artesanal

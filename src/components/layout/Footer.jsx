@@ -3,7 +3,10 @@ import './Footer.css'
 
 const navLinks = [
   { to: '/', label: 'Inicio' },
+  { to: '/aprender', label: 'Aprende' },
   { to: '/galeria', label: 'Galería' },
+  { to: '/asistente', label: 'Asistente IA' },
+  { to: '/disenador', label: 'Diseñador' },
   { to: '/sobre-nosotras', label: 'Sobre Nosotras' },
   { to: '/contacto', label: 'Contacto' },
 ]
