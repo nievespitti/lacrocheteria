@@ -18,6 +18,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const { user, loading, signOut } = useAuth()
   const navigate = useNavigate()
+  const navLinks = user ? [...links, { to: '/mis-proyectos', label: '☆ Mis Proyectos' }] : links
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -41,7 +42,7 @@ export default function Header() {
         </Link>
 
         <nav className={`header__nav${menuOpen ? ' header__nav--open' : ''}`}>
-          {links.map(link => (
+          {navLinks.map(link => (
             <NavLink
               key={link.to}
               to={link.to}

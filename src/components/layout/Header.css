@@ -56,11 +56,20 @@
   text-align: center;
   padding: 8px;
   border-radius: 50%;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.header__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
   background-image: url('/boton_hilo_final_400.png');
   background-size: cover;
   background-position: center;
-  text-decoration: none;
-  transition: transform 0.2s ease;
+  opacity: 0.65;
+  z-index: 0;
 }
 
 .header__link:hover {
@@ -68,6 +77,8 @@
 }
 
 .header__link-label {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 0.68rem;

@@ -247,6 +247,31 @@
   color: #fff;
 }
 
+.action-btn--save {
+  border-color: var(--color-sage);
+  color: var(--color-sage);
+  text-decoration: none;
+  text-align: center;
+}
+
+.action-btn--save:hover {
+  background: var(--color-sage);
+  border-color: var(--color-sage);
+  color: #fff;
+}
+
+.action-btn--save:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.panel__error {
+  font-size: 0.72rem;
+  color: #a83232;
+  margin: -2px 0 8px;
+  line-height: 1.4;
+}
+
 /* LEYENDA */
 .panel--legend {
   font-size: 0.78rem;

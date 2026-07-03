@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { guardarProyecto } from '../lib/proyectos'
 import './AsistenteIA.css'
 
 const NIVELES = ['Principiante', 'Intermedia', 'Avanzada']
@@ -28,7 +31,7 @@ function LineaPatron({ linea }) {
   return <p className="patron__p">{contenido}</p>
 }
 
-function PatronResultado({ texto }) {
+export function PatronResultado({ texto }) {
   if (!texto) return null
   const lineas = texto.split('\n')
   return (
@@ -39,12 +42,16 @@ function PatronResultado({ texto }) {
 }
 
 export default function AsistenteIA() {
+  const { user } = useAuth()
   const [descripcion, setDescripcion] = useState('')
   const [nivel, setNivel] = useState('Principiante')
   const [materiales, setMateriales] = useState('')
   const [estado, setEstado] = useState('idle') // idle | generando | ok | error
   const [patron, setPatron] = useState('')
   const [copiado, setCopiado] = useState(false)
+  const [guardando, setGuardando] = useState(false)
+  const [guardado, setGuardado] = useState(false)
+  const [errorGuardar, setErrorGuardar] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -94,6 +101,29 @@ export default function AsistenteIA() {
     setPatron('')
     setDescripcion('')
     setMateriales('')
+    setGuardado(false)
+  }
+
+  async function guardar() {
+    if (!user || guardando) return
+    setGuardando(true)
+    setErrorGuardar(false)
+    try {
+      const titulo = patron.match(/^##\s+(.+)/m)?.[1] || 'Patrón sin título'
+      const { error } = await guardarProyecto({
+        userId: user.id,
+        tipo: 'patron',
+        titulo,
+        contenido: { descripcion, nivel, materiales, patron },
+      })
+      if (error) throw error
+      setGuardado(true)
+    } catch (err) {
+      console.error('Error al guardar patrón:', err)
+      setErrorGuardar(true)
+    } finally {
+      setGuardando(false)
+    }
   }
 
   return (
@@ -191,10 +221,28 @@ export default function AsistenteIA() {
                 <button className="patron__btn patron__btn--copy" onClick={copiar}>
                   {copiado ? '✓ Copiado' : '◈ Copiar'}
                 </button>
+                {user ? (
+                  <button
+                    className="patron__btn patron__btn--save"
+                    onClick={guardar}
+                    disabled={guardando || guardado}
+                  >
+                    {guardado ? '✓ Guardado' : guardando ? 'Guardando…' : '☆ Guardar'}
+                  </button>
+                ) : (
+                  <Link to="/login" className="patron__btn patron__btn--save">
+                    ☆ Inicia sesión para guardar
+                  </Link>
+                )}
                 <button className="patron__btn patron__btn--new" onClick={nueva}>
                   ✦ Nuevo patrón
                 </button>
               </div>
+              {errorGuardar && (
+                <p className="form-error">
+                  ◈ No se pudo guardar el patrón. Comprueba tu conexión e inténtalo de nuevo.
+                </p>
+              )}
               <PatronResultado texto={patron} />
             </div>
           )}

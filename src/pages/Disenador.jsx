@@ -1,4 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { guardarProyecto } from '../lib/proyectos'
 import './Disenador.css'
 
 const CELL = 36
@@ -442,9 +445,12 @@ function EraseIcon({ active }) {
 
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function Disenador() {
-  const [rows, setRows] = useState(15)
-  const [cols, setCols] = useState(20)
-  const [grid, setGrid] = useState(() => makeGrid(15, 20))
+  const { user } = useAuth()
+  const location = useLocation()
+  const cargado = location.state?.proyecto
+  const [rows, setRows] = useState(cargado?.rows ?? 15)
+  const [cols, setCols] = useState(cargado?.cols ?? 20)
+  const [grid, setGrid] = useState(() => cargado?.grid ?? makeGrid(cargado?.rows ?? 15, cargado?.cols ?? 20))
   const [selectedStitch, setSelectedStitch] = useState('sc')
   const [selectedColor, setSelectedColor] = useState(COLORS[0])
   const [activeCategory, setActiveCategory] = useState('base')
@@ -452,6 +458,9 @@ export default function Disenador() {
   const [bgImage, setBgImage] = useState(null)
   const [bgOpacity, setBgOpacity] = useState(0.3)
   const [showLegend, setShowLegend] = useState(false)
+  const [guardando, setGuardando] = useState(false)
+  const [guardado, setGuardado] = useState(false)
+  const [errorGuardar, setErrorGuardar] = useState(false)
   const svgRef = useRef(null)
   const fileInputRef = useRef(null)
   const jsonInputRef = useRef(null)
@@ -497,6 +506,31 @@ export default function Disenador() {
       link.click()
     }
     img.src = url
+  }
+
+  const guardarEnCuenta = async () => {
+    if (!user || guardando) return
+    const titulo = window.prompt('Título del diseño:', 'Diseño sin título')
+    if (!titulo) return
+    setGuardando(true)
+    setErrorGuardar(false)
+    try {
+      const { error } = await guardarProyecto({
+        userId: user.id,
+        tipo: 'diseno',
+        titulo,
+        contenido: { rows, cols, grid },
+      })
+      if (error) throw error
+      setGuardado(true)
+      setTimeout(() => setGuardado(false), 2000)
+    } catch (err) {
+      console.error('Error al guardar diseño:', err)
+      setErrorGuardar(true)
+      setTimeout(() => setErrorGuardar(false), 3000)
+    } finally {
+      setGuardando(false)
+    }
   }
 
   const saveJSON = () => {
@@ -645,6 +679,18 @@ export default function Disenador() {
             <button className="action-btn" onClick={saveJSON}>↓ Guardar patrón (.json)</button>
             <button className="action-btn" onClick={() => jsonInputRef.current.click()}>↑ Cargar patrón (.json)</button>
             <input ref={jsonInputRef} type="file" accept=".json" className="file-hidden" onChange={loadJSON} />
+            {user ? (
+              <button className="action-btn action-btn--save" onClick={guardarEnCuenta} disabled={guardando}>
+                {guardado ? '✓ Guardado' : guardando ? 'Guardando…' : '☆ Guardar en mi cuenta'}
+              </button>
+            ) : (
+              <Link to="/login" className="action-btn action-btn--save">
+                ☆ Inicia sesión para guardar
+              </Link>
+            )}
+            {errorGuardar && (
+              <p className="panel__error">No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.</p>
+            )}
             <button className="action-btn action-btn--danger"
               onClick={() => { if (window.confirm('¿Limpiar toda la cuadrícula?')) setGrid(makeGrid(rows, cols)) }}>
               Limpiar todo
