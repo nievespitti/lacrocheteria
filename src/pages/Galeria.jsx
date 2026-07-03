@@ -21,6 +21,7 @@ const proyectosPorCategoria = {
     { id: 'bolso-004', titulo: 'Bolso Boho con Borlas', descripcion: 'Bolso a rayas de colores con borlas y pompones.', imagen: '/galeria/accesorios/bolso_004.png' },
     { id: 'bolso-005', titulo: 'Bolso Triangular Menta', descripcion: 'Bolso triangular en verde menta con asa de piel.', imagen: '/galeria/accesorios/bolso_005.png' },
     { id: 'bolso-006', titulo: 'Bolso Bicolor', descripcion: 'Bolso en rojo y verde con asas a juego.', imagen: '/galeria/accesorios/bolso_006.png' },
+    { id: 'bolso-007', titulo: 'Bolso Marrón con Llavero', descripcion: 'Bolso tote marrón con asas malva y llavero a juego.', imagen: '/galeria/accesorios/bolso_007.png' },
   ],
   Decoración: [
     { id: 4, titulo: 'Cojín Boho', descripcion: 'Cojín con motivo mandalas en tonos tierra.', imagen: 'https://picsum.photos/seed/boho-pillow/600/600' },
