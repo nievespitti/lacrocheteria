@@ -41,9 +41,11 @@
 }
 
 .valor-item__icon {
-  font-size: 2.6rem;
+  font-size: 2rem;
   display: block;
   margin-bottom: 18px;
+  color: var(--color-accent);
+  line-height: 1;
 }
 
 .valor-item h3 {

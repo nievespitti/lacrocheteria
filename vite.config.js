@@ -1,6 +1,13 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 
+function parseImagen(imagen) {
+  if (typeof imagen !== 'string') return null
+  const match = imagen.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/)
+  if (!match) return null
+  return { type: 'image', source: { type: 'base64', media_type: match[1], data: match[2] } }
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
@@ -20,15 +27,61 @@ export default defineConfig(({ mode }) => {
             req.on('data', chunk => chunks.push(chunk))
             req.on('end', async () => {
               try {
-                const { descripcion, nivel, materiales } = JSON.parse(
+                const { descripcion, nivel, materiales, idioma, imagen } = JSON.parse(
                   Buffer.concat(chunks).toString()
                 )
 
-                const prompt = `Eres experta en crochet. Genera un patrón completo en español para:
+                const imageBlock = parseImagen(imagen)
 
-PROYECTO: ${descripcion}
+                if (!descripcion && !imageBlock) {
+                  res.statusCode = 400
+                  return res.end(JSON.stringify({ error: 'Falta la descripción o una foto de referencia' }))
+                }
+
+                const proyecto = descripcion || (idioma === 'en'
+                  ? 'the crochet piece shown in the attached reference photo'
+                  : 'la pieza de crochet que se muestra en la foto de referencia adjunta')
+
+                const prompt = idioma === 'en' ? `You are a crochet expert. Generate a complete pattern in English for:
+
+PROJECT: ${proyecto}
+LEVEL: ${nivel || 'Beginner'}
+AVAILABLE MATERIALS: ${materiales || 'the usual materials for this type of project'}
+${imageBlock ? 'A reference image is attached: base the shape, colors and details of the final design on it.' : ''}
+
+Reply ONLY with the pattern, using this exact format (no introduction or closing remarks):
+
+## [Project name]
+
+**Difficulty:** ${nivel || 'Beginner'}
+**Estimated time:** [approximate time]
+**Approximate size:** [final size]
+
+## Materials
+
+- [list of exact materials]
+
+## Abbreviations
+
+- [abbreviation]: [full name]
+
+## Instructions
+
+**Round 1:** [instructions with exact stitch count]
+**Round 2:** [instructions]
+
+## Finishing
+
+[assembly, sewing and finishing details]
+
+## Tips
+
+[2-3 tips adapted to the ${nivel || 'Beginner'} level]` : `Eres experta en crochet. Genera un patrón completo en español para:
+
+PROYECTO: ${proyecto}
 NIVEL: ${nivel || 'Principiante'}
 MATERIALES DISPONIBLES: ${materiales || 'los habituales para este tipo de proyecto'}
+${imageBlock ? 'Se adjunta una imagen de referencia: básate en ella para la forma, los colores y los detalles del diseño final.' : ''}
 
 Responde SOLO con el patrón, con este formato exacto (sin introducción ni despedida):
 
@@ -71,7 +124,10 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
                   body: JSON.stringify({
                     model: 'claude-sonnet-4-6',
                     max_tokens: 8192,
-                    messages: [{ role: 'user', content: prompt }],
+                    messages: [{
+                      role: 'user',
+                      content: imageBlock ? [imageBlock, { type: 'text', text: prompt }] : prompt,
+                    }],
                   }),
                 })
 

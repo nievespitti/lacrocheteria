@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
 import './Disenador.css'
 
@@ -444,8 +445,21 @@ function EraseIcon({ active }) {
 }
 
 // ─── Componente principal ─────────────────────────────────────────────────────
+const CAT_LABEL_KEYS = {
+  base: 'catBase',
+  aug: 'catAumentos',
+  dec: 'catDisminuciones',
+  special: 'catEspeciales',
+  relief: 'catRelieve',
+  loop: 'catLazada',
+  texture: 'catTextura',
+  compound: 'catCompuestos',
+}
+
 export default function Disenador() {
   const { user } = useAuth()
+  const { t } = useLanguage()
+  const catLabel = (id) => t(`disenador.${CAT_LABEL_KEYS[id]}`)
   const location = useLocation()
   const cargado = location.state?.proyecto
   const [rows, setRows] = useState(cargado?.rows ?? 15)
@@ -510,7 +524,7 @@ export default function Disenador() {
 
   const guardarEnCuenta = async () => {
     if (!user || guardando) return
-    const titulo = window.prompt('Título del diseño:', 'Diseño sin título')
+    const titulo = window.prompt(t('disenador.tituloPrompt'), t('disenador.tituloPromptDefault'))
     if (!titulo) return
     setGuardando(true)
     setErrorGuardar(false)
@@ -555,7 +569,7 @@ export default function Disenador() {
           setGrid(data.grid)
         }
       } catch {
-        alert('El archivo no es un patrón válido.')
+        alert(t('disenador.archivoInvalido'))
       }
     }
     reader.readAsText(file)
@@ -579,8 +593,8 @@ export default function Disenador() {
   return (
     <div className="disenador">
       <div className="disenador__header">
-        <h1>Diseñador de Patrones</h1>
-        <p>Símbolos estándar CYC · Crea tu diagrama punto a punto</p>
+        <h1>{t('disenador.titulo')}</h1>
+        <p>{t('disenador.subtitulo')}</p>
       </div>
 
       <div className="disenador__layout">
@@ -588,7 +602,7 @@ export default function Disenador() {
 
           {/* Paleta de puntos con tabs de categoría */}
           <div className="panel">
-            <h3 className="panel__title">Puntos CYC</h3>
+            <h3 className="panel__title">{t('disenador.puntosPanelTitulo')}</h3>
             <div className="cat-tabs">
               {STITCH_CATEGORIES.map(cat => (
                 <button
@@ -596,7 +610,7 @@ export default function Disenador() {
                   className={`cat-tab${activeCategory === cat.id ? ' cat-tab--active' : ''}`}
                   onClick={() => setActiveCategory(cat.id)}
                 >
-                  {cat.label}
+                  {catLabel(cat.id)}
                 </button>
               ))}
             </div>
@@ -618,20 +632,20 @@ export default function Disenador() {
               <button
                 className={`stitch-btn stitch-btn--erase${selectedStitch === 'erase' ? ' stitch-btn--active' : ''}`}
                 onClick={() => setSelectedStitch('erase')}
-                title="Borrar"
+                title={t('disenador.borrarLabel')}
               >
                 <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
                   <EraseIcon active={selectedStitch === 'erase'} />
                 </svg>
                 <span className="stitch-btn__abbr">✕</span>
-                <span className="stitch-btn__label">Borrar</span>
+                <span className="stitch-btn__label">{t('disenador.borrarLabel')}</span>
               </button>
             </div>
           </div>
 
           {/* Color de hilo */}
           <div className="panel">
-            <h3 className="panel__title">Color de hilo</h3>
+            <h3 className="panel__title">{t('disenador.colorPanelTitulo')}</h3>
             <div className="color-palette">
               {COLORS.map(c => (
                 <button
@@ -647,7 +661,7 @@ export default function Disenador() {
                 className="color-custom"
                 value={selectedColor}
                 onChange={e => setSelectedColor(e.target.value)}
-                title="Color personalizado"
+                title={t('disenador.colorPersonalizado')}
               />
             </div>
             <div className="color-preview">
@@ -658,60 +672,60 @@ export default function Disenador() {
 
           {/* Tamaño */}
           <div className="panel">
-            <h3 className="panel__title">Tamaño de la cuadrícula</h3>
+            <h3 className="panel__title">{t('disenador.tamanoPanelTitulo')}</h3>
             <div className="grid-size">
-              <label>Filas
+              <label>{t('disenador.filasLabel')}
                 <input type="number" min="5" max="40" value={rows}
                   onChange={e => handleResize(Number(e.target.value), cols)} />
               </label>
-              <label>Columnas
+              <label>{t('disenador.columnasLabel')}
                 <input type="number" min="5" max="50" value={cols}
                   onChange={e => handleResize(rows, Number(e.target.value))} />
               </label>
             </div>
-            <p className="grid-info">{rows} × {cols} · {stitchCount} punto{stitchCount !== 1 ? 's' : ''}</p>
+            <p className="grid-info">{rows} × {cols} · {stitchCount} {stitchCount !== 1 ? t('disenador.puntos') : t('disenador.punto')}</p>
           </div>
 
           {/* Archivo */}
           <div className="panel">
-            <h3 className="panel__title">Archivo</h3>
-            <button className="action-btn action-btn--primary" onClick={exportPNG}>↓ Exportar PNG</button>
-            <button className="action-btn" onClick={saveJSON}>↓ Guardar patrón (.json)</button>
-            <button className="action-btn" onClick={() => jsonInputRef.current.click()}>↑ Cargar patrón (.json)</button>
+            <h3 className="panel__title">{t('disenador.archivoPanelTitulo')}</h3>
+            <button className="action-btn action-btn--primary" onClick={exportPNG}>{t('disenador.exportarPng')}</button>
+            <button className="action-btn" onClick={saveJSON}>{t('disenador.guardarJson')}</button>
+            <button className="action-btn" onClick={() => jsonInputRef.current.click()}>{t('disenador.cargarJson')}</button>
             <input ref={jsonInputRef} type="file" accept=".json" className="file-hidden" onChange={loadJSON} />
             {user ? (
               <button className="action-btn action-btn--save" onClick={guardarEnCuenta} disabled={guardando}>
-                {guardado ? '✓ Guardado' : guardando ? 'Guardando…' : '☆ Guardar en mi cuenta'}
+                {guardado ? t('disenador.guardado') : guardando ? t('disenador.guardando') : t('disenador.guardarCuenta')}
               </button>
             ) : (
               <Link to="/login" className="action-btn action-btn--save">
-                ☆ Inicia sesión para guardar
+                {t('disenador.iniciaSesionGuardar')}
               </Link>
             )}
             {errorGuardar && (
-              <p className="panel__error">No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.</p>
+              <p className="panel__error">{t('disenador.errorGuardar')}</p>
             )}
             <button className="action-btn action-btn--danger"
-              onClick={() => { if (window.confirm('¿Limpiar toda la cuadrícula?')) setGrid(makeGrid(rows, cols)) }}>
-              Limpiar todo
+              onClick={() => { if (window.confirm(t('disenador.confirmLimpiar'))) setGrid(makeGrid(rows, cols)) }}>
+              {t('disenador.limpiarTodo')}
             </button>
           </div>
 
           {/* Imagen de referencia */}
           <div className="panel">
-            <h3 className="panel__title">Imagen de referencia</h3>
-            <p className="panel__hint">Sube una foto para calcar el patrón encima</p>
-            <button className="action-btn" onClick={() => fileInputRef.current.click()}>↑ Subir imagen</button>
+            <h3 className="panel__title">{t('disenador.imagenRefPanelTitulo')}</h3>
+            <p className="panel__hint">{t('disenador.imagenRefHint')}</p>
+            <button className="action-btn" onClick={() => fileInputRef.current.click()}>{t('disenador.subirImagen')}</button>
             <input ref={fileInputRef} type="file" accept="image/*" className="file-hidden" onChange={loadBgImage} />
             {bgImage && (
               <>
                 <div className="opacity-row">
-                  <label className="opacity-label">Opacidad</label>
+                  <label className="opacity-label">{t('disenador.opacidadLabel')}</label>
                   <input type="range" min="0.05" max="0.9" step="0.05" value={bgOpacity}
                     onChange={e => setBgOpacity(Number(e.target.value))} className="opacity-slider" />
                   <span className="opacity-value">{Math.round(bgOpacity * 100)}%</span>
                 </div>
-                <button className="action-btn" onClick={() => setBgImage(null)}>✕ Quitar imagen</button>
+                <button className="action-btn" onClick={() => setBgImage(null)}>{t('disenador.quitarImagen')}</button>
               </>
             )}
           </div>
@@ -719,13 +733,13 @@ export default function Disenador() {
           {/* Leyenda desplegable */}
           <div className="panel">
             <button className="legend-toggle" onClick={() => setShowLegend(v => !v)}>
-              {showLegend ? '▲' : '▼'} Leyenda completa ({ALL_STITCHES.length} puntos)
+              {showLegend ? '▲' : '▼'} {t('disenador.leyendaToggle')} ({ALL_STITCHES.length})
             </button>
             {showLegend && (
               <div className="legend-list">
                 {STITCH_CATEGORIES.map(cat => (
                   <div key={cat.id}>
-                    <p className="legend-cat">{cat.label}</p>
+                    <p className="legend-cat">{catLabel(cat.id)}</p>
                     {cat.stitches.map(s => (
                       <div key={s.id} className="legend-item">
                         <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true">
@@ -744,7 +758,7 @@ export default function Disenador() {
 
         {/* Cuadrícula SVG */}
         <div className="disenador__canvas-wrap">
-          <div className="canvas-hint">Haz clic o arrastra para dibujar · Punto activo: <strong>{selectedStitch}</strong></div>
+          <div className="canvas-hint">{t('disenador.canvasHint')} <strong>{selectedStitch}</strong></div>
           <div className="canvas-scroll">
             <svg
               ref={svgRef}

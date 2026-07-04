@@ -28,6 +28,22 @@
   background: var(--color-background);
 }
 
+.card__image-wrap--placeholder {
+  background: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__placeholder-text {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
 .card__image--video {
   object-fit: contain;
 }

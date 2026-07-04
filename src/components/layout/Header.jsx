@@ -1,24 +1,26 @@
 import { useState, useEffect } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useLanguage } from '../../context/LanguageContext'
 import './Header.css'
-
-const links = [
-  { to: '/', label: 'Inicio' },
-  { to: '/aprender', label: 'Aprende' },
-  { to: '/galeria', label: 'Galería' },
-  { to: '/asistente', label: '◈ Asistente IA' },
-  { to: '/disenador', label: '✦ Diseñador' },
-  { to: '/sobre-nosotras', label: 'Sobre Nosotras' },
-  { to: '/contacto', label: 'Contacto' },
-]
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const { user, loading, signOut } = useAuth()
+  const { lang, setLang, t } = useLanguage()
   const navigate = useNavigate()
-  const navLinks = user ? [...links, { to: '/mis-proyectos', label: '☆ Mis Proyectos' }] : links
+
+  const links = [
+    { to: '/', label: t('header.inicio') },
+    { to: '/aprender', label: t('header.aprende') },
+    { to: '/galeria', label: t('header.galeria') },
+    { to: '/asistente', label: t('header.asistente') },
+    { to: '/disenador', label: t('header.disenador') },
+    { to: '/sobre-nosotras', label: t('header.sobreNosotras') },
+    { to: '/contacto', label: t('header.contacto') },
+  ]
+  const navLinks = user ? [...links, { to: '/mis-proyectos', label: t('header.misProyectos') }] : links
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -62,8 +64,23 @@ export default function Header() {
             className="header__biblia-btn"
             onClick={closeMenu}
           >
-            📖 Biblia del Crochet
+            {t('header.biblia')}
           </a>
+
+          <div className="header__lang">
+            <button
+              className={`header__lang-btn${lang === 'es' ? ' header__lang-btn--active' : ''}`}
+              onClick={() => setLang('es')}
+            >
+              ES
+            </button>
+            <button
+              className={`header__lang-btn${lang === 'en' ? ' header__lang-btn--active' : ''}`}
+              onClick={() => setLang('en')}
+            >
+              EN
+            </button>
+          </div>
 
           {!loading && (
             user ? (
@@ -72,12 +89,12 @@ export default function Header() {
                   {user.user_metadata?.nombre || user.email.split('@')[0]}
                 </span>
                 <button onClick={handleSignOut} className="header__logout">
-                  Salir
+                  {t('header.salir')}
                 </button>
               </div>
             ) : (
               <Link to="/login" className="header__login-btn" onClick={closeMenu}>
-                Entrar
+                {t('header.entrar')}
               </Link>
             )
           )}
@@ -86,7 +103,7 @@ export default function Header() {
         <button
           className={`header__hamburger${menuOpen ? ' header__hamburger--open' : ''}`}
           onClick={() => setMenuOpen(o => !o)}
-          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          aria-label={menuOpen ? t('header.cerrarMenu') : t('header.abrirMenu')}
           aria-expanded={menuOpen}
         >
           <span />

@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import './Auth.css'
 
 export default function Registro() {
   const { signUp } = useAuth()
+  const { t } = useLanguage()
   const [nombre, setNombre] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,13 +15,20 @@ export default function Registro() {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  const traducirError = (msg) => {
+    if (msg.includes('already registered')) return t('auth.errYaRegistrado')
+    if (msg.includes('Password should be')) return t('auth.errPasswordCorta')
+    if (msg.includes('Unable to validate')) return t('auth.errEmailInvalido')
+    return msg
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
-    if (!nombre.trim()) return setError('Escribe tu nombre.')
-    if (password !== confirm) return setError('Las contraseñas no coinciden.')
-    if (password.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.')
+    if (!nombre.trim()) return setError(t('auth.errNombre'))
+    if (password !== confirm) return setError(t('auth.errPasswordsNoCoinciden'))
+    if (password.length < 6) return setError(t('auth.errPasswordCorta'))
 
     setLoading(true)
     const { error } = await signUp(email, password, nombre.trim())
@@ -38,14 +47,14 @@ export default function Registro() {
         <div className="auth-card">
           <div className="auth-card__header">
             <div className="auth-card__icon">✉️</div>
-            <h1 className="auth-card__title">¡Casi listo!</h1>
+            <h1 className="auth-card__title">{t('auth.emailConfirmTitulo')}</h1>
             <p className="auth-card__subtitle">
-              Te hemos enviado un correo a <strong>{email}</strong>.
-              Haz clic en el enlace para confirmar tu cuenta.
+              {t('auth.emailConfirmTexto1')} <strong>{email}</strong>.
+              {' '}{t('auth.emailConfirmTexto2')}
             </p>
           </div>
           <p className="auth-footer">
-            <Link to="/login">Volver al inicio de sesión</Link>
+            <Link to="/login">{t('auth.volverLogin')}</Link>
           </p>
         </div>
       </div>
@@ -57,15 +66,15 @@ export default function Registro() {
       <div className="auth-card">
         <div className="auth-card__header">
           <div className="auth-card__icon">🧶</div>
-          <h1 className="auth-card__title">Crea tu cuenta</h1>
-          <p className="auth-card__subtitle">Únete a La CrocheterIA gratis</p>
+          <h1 className="auth-card__title">{t('auth.registroTitulo')}</h1>
+          <p className="auth-card__subtitle">{t('auth.registroSubtitulo')}</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <div className="auth-error">{error}</div>}
 
           <div className="auth-field">
-            <label htmlFor="nombre">Tu nombre</label>
+            <label htmlFor="nombre">{t('auth.nombreLabel')}</label>
             <input
               id="nombre"
               type="text"
@@ -78,7 +87,7 @@ export default function Registro() {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="email">Correo electrónico</label>
+            <label htmlFor="email">{t('auth.emailLabel')}</label>
             <input
               id="email"
               type="email"
@@ -91,7 +100,7 @@ export default function Registro() {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="password">Contraseña</label>
+            <label htmlFor="password">{t('auth.passwordLabel')}</label>
             <input
               id="password"
               type="password"
@@ -104,7 +113,7 @@ export default function Registro() {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="confirm">Repite la contraseña</label>
+            <label htmlFor="confirm">{t('auth.confirmarPasswordLabel')}</label>
             <input
               id="confirm"
               type="password"
@@ -117,22 +126,15 @@ export default function Registro() {
           </div>
 
           <button type="submit" className="auth-submit" disabled={loading}>
-            {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+            {loading ? t('auth.registroBtnCargando') : t('auth.registroBtn')}
           </button>
         </form>
 
         <p className="auth-footer">
-          ¿Ya tienes cuenta?{' '}
-          <Link to="/login">Inicia sesión</Link>
+          {t('auth.yaTienesCuenta')}{' '}
+          <Link to="/login">{t('auth.iniciaSesion')}</Link>
         </p>
       </div>
     </div>
   )
-}
-
-function traducirError(msg) {
-  if (msg.includes('already registered')) return 'Este correo ya tiene una cuenta. Prueba a iniciar sesión.'
-  if (msg.includes('Password should be')) return 'La contraseña debe tener al menos 6 caracteres.'
-  if (msg.includes('Unable to validate')) return 'Correo electrónico no válido.'
-  return msg
 }

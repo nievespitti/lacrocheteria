@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
 import './AsistenteIA.css'
-
-const NIVELES = ['Principiante', 'Intermedia', 'Avanzada']
 
 
 function LineaPatron({ linea }) {
@@ -43,19 +42,40 @@ export function PatronResultado({ texto }) {
 
 export default function AsistenteIA() {
   const { user } = useAuth()
+  const { t, lang } = useLanguage()
+  const niveles = t('asistente.niveles')
   const [descripcion, setDescripcion] = useState('')
-  const [nivel, setNivel] = useState('Principiante')
+  const [nivelIndex, setNivelIndex] = useState(0)
   const [materiales, setMateriales] = useState('')
+  const [imagen, setImagen] = useState(null)
+  const [fotoError, setFotoError] = useState('')
   const [estado, setEstado] = useState('idle') // idle | generando | ok | error
   const [patron, setPatron] = useState('')
   const [copiado, setCopiado] = useState(false)
   const [guardando, setGuardando] = useState(false)
   const [guardado, setGuardado] = useState(false)
   const [errorGuardar, setErrorGuardar] = useState(false)
+  const fotoInputRef = useRef(null)
+  const nivel = niveles[nivelIndex]
+
+  function cargarImagen(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    if (file.size > 3 * 1024 * 1024) {
+      setFotoError(t('asistente.fotoDemasiadoGrande'))
+      e.target.value = ''
+      return
+    }
+    setFotoError('')
+    const reader = new FileReader()
+    reader.onload = (ev) => setImagen(ev.target.result)
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!descripcion.trim()) return
+    if (!user || (!descripcion.trim() && !imagen)) return
     setEstado('generando')
     setPatron('')
 
@@ -63,7 +83,7 @@ export default function AsistenteIA() {
       const res = await fetch('/api/patron', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ descripcion, nivel, materiales }),
+        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagen }),
       })
 
       const data = await res.json()
@@ -101,6 +121,8 @@ export default function AsistenteIA() {
     setPatron('')
     setDescripcion('')
     setMateriales('')
+    setImagen(null)
+    setFotoError('')
     setGuardado(false)
   }
 
@@ -109,7 +131,7 @@ export default function AsistenteIA() {
     setGuardando(true)
     setErrorGuardar(false)
     try {
-      const titulo = patron.match(/^##\s+(.+)/m)?.[1] || 'Patrón sin título'
+      const titulo = patron.match(/^##\s+(.+)/m)?.[1] || t('asistente.sinTitulo')
       const { error } = await guardarProyecto({
         userId: user.id,
         tipo: 'patron',
@@ -131,10 +153,10 @@ export default function AsistenteIA() {
 
       <section className="asistente-hero">
         <div className="asistente-hero__inner">
-          <span className="asistente-hero__eyebrow">✦ Inteligencia Artificial</span>
-          <h1 className="asistente-hero__title">Asistente de Patrones</h1>
+          <span className="asistente-hero__eyebrow">{t('asistente.eyebrow')}</span>
+          <h1 className="asistente-hero__title">{t('asistente.titulo')}</h1>
           <p className="asistente-hero__sub">
-            Describe lo que quieres crear y la IA generará un patrón completo adaptado a tu nivel y materiales.
+            {t('asistente.subtitulo')}
           </p>
         </div>
       </section>
@@ -142,32 +164,41 @@ export default function AsistenteIA() {
       <section className="asistente-main">
         <div className="asistente-main__inner">
 
-          {estado !== 'ok' && (
+          {!user && (
+            <div className="asistente-login-required">
+              <span className="asistente-login-required__icon">◈</span>
+              <h2>{t('asistente.loginRequeridoTitulo')}</h2>
+              <p>{t('asistente.loginRequeridoTexto')}</p>
+              <Link to="/login" className="form-submit">{t('asistente.iniciarSesionBtn')}</Link>
+            </div>
+          )}
+
+          {user && estado !== 'ok' && (
             <form className="asistente-form" onSubmit={handleSubmit}>
               <div className="form-field">
                 <label className="form-label" htmlFor="descripcion">
-                  ¿Qué quieres crear?
+                  {t('asistente.descripcionLabel')} {imagen && <span className="form-label__opt">{t('asistente.descripcionOpcionalConFoto')}</span>}
                 </label>
                 <textarea
                   id="descripcion"
                   className="form-textarea"
-                  placeholder="Ej: Un amigurumi de conejo pequeño con orejas largas, estilo tierno, para regalar a una niña de 3 años."
+                  placeholder={t('asistente.descripcionPlaceholder')}
                   value={descripcion}
                   onChange={e => setDescripcion(e.target.value)}
                   rows={4}
-                  required
+                  required={!imagen}
                 />
               </div>
 
               <div className="form-field">
-                <label className="form-label">Tu nivel</label>
+                <label className="form-label">{t('asistente.nivelLabel')}</label>
                 <div className="nivel-pills">
-                  {NIVELES.map(n => (
+                  {niveles.map((n, i) => (
                     <button
                       key={n}
                       type="button"
-                      className={`nivel-pill${nivel === n ? ' nivel-pill--active' : ''}`}
-                      onClick={() => setNivel(n)}
+                      className={`nivel-pill${nivelIndex === i ? ' nivel-pill--active' : ''}`}
+                      onClick={() => setNivelIndex(i)}
                     >
                       {n}
                     </button>
@@ -177,36 +208,65 @@ export default function AsistenteIA() {
 
               <div className="form-field">
                 <label className="form-label" htmlFor="materiales">
-                  Materiales disponibles <span className="form-label__opt">(opcional)</span>
+                  {t('asistente.materialesLabel')} <span className="form-label__opt">{t('asistente.materialesOpcional')}</span>
                 </label>
                 <textarea
                   id="materiales"
                   className="form-textarea form-textarea--sm"
-                  placeholder="Ej: Lana de algodón amigurumi color crema y rosa, aguja de 2,5 mm, relleno de fibra, ojos de seguridad 6 mm."
+                  placeholder={t('asistente.materialesPlaceholder')}
                   value={materiales}
                   onChange={e => setMateriales(e.target.value)}
                   rows={2}
                 />
               </div>
 
+              <div className="form-field">
+                <label className="form-label">
+                  {t('asistente.fotoLabel')} <span className="form-label__opt">{t('asistente.fotoOpcional')}</span>
+                </label>
+                {imagen ? (
+                  <div className="foto-preview">
+                    <img src={imagen} alt="" className="foto-preview__img" />
+                    <button type="button" className="foto-preview__remove" onClick={() => { setImagen(null); setFotoError('') }}>
+                      {t('asistente.quitarFoto')}
+                    </button>
+                  </div>
+                ) : (
+                  <button type="button" className="foto-upload-btn" onClick={() => fotoInputRef.current.click()}>
+                    {t('asistente.subirFoto')}
+                  </button>
+                )}
+                <input
+                  ref={fotoInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="file-hidden"
+                  aria-label={t('asistente.fotoLabel')}
+                  onChange={cargarImagen}
+                />
+                {fotoError && (
+                  <p className="form-error">{fotoError}</p>
+                )}
+              </div>
+
               {estado === 'error' && (
                 <p className="form-error">
-                  ◈ Algo salió mal. Comprueba que la clave de API esté configurada e inténtalo de nuevo.
+                  {t('asistente.errorGenerico')}
                 </p>
               )}
 
               <button
                 type="submit"
                 className="form-submit"
-                disabled={estado === 'generando' || !descripcion.trim()}
+                disabled={estado === 'generando' || (!descripcion.trim() && !imagen)}
               >
                 {estado === 'generando' ? (
                   <span className="form-submit__loading">
                     <span className="spinner" />
-                    Generando patrón…
+                    {t('asistente.generando')}
                   </span>
                 ) : (
-                  '✦ Generar patrón'
+                  t('asistente.generarBtn')
                 )}
               </button>
             </form>
@@ -216,10 +276,10 @@ export default function AsistenteIA() {
             <div className="patron">
               <div className="patron__actions">
                 <button className="patron__btn patron__btn--download" onClick={descargar}>
-                  ↓ Descargar .txt
+                  {t('asistente.descargarBtn')}
                 </button>
                 <button className="patron__btn patron__btn--copy" onClick={copiar}>
-                  {copiado ? '✓ Copiado' : '◈ Copiar'}
+                  {copiado ? t('asistente.copiado') : t('asistente.copiarBtn')}
                 </button>
                 {user ? (
                   <button
@@ -227,20 +287,20 @@ export default function AsistenteIA() {
                     onClick={guardar}
                     disabled={guardando || guardado}
                   >
-                    {guardado ? '✓ Guardado' : guardando ? 'Guardando…' : '☆ Guardar'}
+                    {guardado ? t('asistente.guardado') : guardando ? t('asistente.guardando') : t('asistente.guardarBtn')}
                   </button>
                 ) : (
                   <Link to="/login" className="patron__btn patron__btn--save">
-                    ☆ Inicia sesión para guardar
+                    {t('asistente.iniciaSesionGuardar')}
                   </Link>
                 )}
                 <button className="patron__btn patron__btn--new" onClick={nueva}>
-                  ✦ Nuevo patrón
+                  {t('asistente.nuevoBtn')}
                 </button>
               </div>
               {errorGuardar && (
                 <p className="form-error">
-                  ◈ No se pudo guardar el patrón. Comprueba tu conexión e inténtalo de nuevo.
+                  {t('asistente.errorGuardar')}
                 </p>
               )}
               <PatronResultado texto={patron} />
@@ -253,22 +313,22 @@ export default function AsistenteIA() {
       {estado === 'idle' && (
         <section className="asistente-info">
           <div className="asistente-info__inner">
-            <h2 className="asistente-info__title">¿Qué puede hacer el asistente?</h2>
+            <h2 className="asistente-info__title">{t('asistente.infoTitulo')}</h2>
             <div className="info-grid">
               <div className="info-card">
                 <span className="info-card__icon">✦</span>
-                <h3>Cualquier proyecto</h3>
-                <p>Amigurumis, bolsos, prendas, accesorios, hogar… describe lo que imaginas.</p>
+                <h3>{t('asistente.info1Titulo')}</h3>
+                <p>{t('asistente.info1Texto')}</p>
               </div>
               <div className="info-card">
                 <span className="info-card__icon">◈</span>
-                <h3>Adaptado a ti</h3>
-                <p>Las instrucciones se ajustan a tu nivel: más detalladas para principiantes, más técnicas para avanzadas.</p>
+                <h3>{t('asistente.info2Titulo')}</h3>
+                <p>{t('asistente.info2Texto')}</p>
               </div>
               <div className="info-card">
                 <span className="info-card__icon">❋</span>
-                <h3>Con tus materiales</h3>
-                <p>Indica la lana y aguja que tienes y el patrón se calculará para ellos.</p>
+                <h3>{t('asistente.info3Titulo')}</h3>
+                <p>{t('asistente.info3Texto')}</p>
               </div>
             </div>
           </div>

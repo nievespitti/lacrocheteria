@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import { listarProyectos, borrarProyecto } from '../lib/proyectos'
 import { PatronResultado } from './AsistenteIA'
 import './MisProyectos.css'
 
-function formatearFecha(iso) {
-  return new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+function formatearFecha(iso, lang) {
+  return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-function TarjetaPatron({ proyecto, onBorrar }) {
+function TarjetaPatron({ proyecto, onBorrar, t, lang }) {
   const [abierto, setAbierto] = useState(false)
   return (
     <div className="proyecto-card">
       <div className="proyecto-card__header">
         <div>
           <h3 className="proyecto-card__title">{proyecto.titulo}</h3>
-          <p className="proyecto-card__meta">Nivel {proyecto.contenido.nivel} · {formatearFecha(proyecto.created_at)}</p>
+          <p className="proyecto-card__meta">{t('misProyectos.nivelLabel')} {proyecto.contenido.nivel} · {formatearFecha(proyecto.created_at, lang)}</p>
         </div>
         <div className="proyecto-card__actions">
           <button className="proyecto-btn" onClick={() => setAbierto(v => !v)}>
-            {abierto ? '▲ Ocultar' : '▼ Ver patrón'}
+            {abierto ? t('misProyectos.ocultar') : t('misProyectos.verPatron')}
           </button>
           <button className="proyecto-btn proyecto-btn--danger" onClick={() => onBorrar(proyecto.id)}>
-            ✕ Eliminar
+            {t('misProyectos.eliminar')}
           </button>
         </div>
       </div>
@@ -55,7 +56,7 @@ function MiniaturaDiseno({ grid, rows, cols }) {
   )
 }
 
-function TarjetaDiseno({ proyecto, onBorrar }) {
+function TarjetaDiseno({ proyecto, onBorrar, t, lang }) {
   const navigate = useNavigate()
   const { rows, cols, grid } = proyecto.contenido
   const puntos = grid.flat().filter(c => c.stitch !== null).length
@@ -67,7 +68,7 @@ function TarjetaDiseno({ proyecto, onBorrar }) {
           <MiniaturaDiseno grid={grid} rows={rows} cols={cols} />
           <div>
             <h3 className="proyecto-card__title">{proyecto.titulo}</h3>
-            <p className="proyecto-card__meta">{rows} × {cols} · {puntos} puntos · {formatearFecha(proyecto.created_at)}</p>
+            <p className="proyecto-card__meta">{rows} × {cols} · {puntos} {t('misProyectos.puntosLabel')} · {formatearFecha(proyecto.created_at, lang)}</p>
           </div>
         </div>
         <div className="proyecto-card__actions">
@@ -75,10 +76,10 @@ function TarjetaDiseno({ proyecto, onBorrar }) {
             className="proyecto-btn"
             onClick={() => navigate('/disenador', { state: { proyecto: { rows, cols, grid } } })}
           >
-            ✦ Abrir en el Diseñador
+            {t('misProyectos.abrirDisenador')}
           </button>
           <button className="proyecto-btn proyecto-btn--danger" onClick={() => onBorrar(proyecto.id)}>
-            ✕ Eliminar
+            {t('misProyectos.eliminar')}
           </button>
         </div>
       </div>
@@ -88,6 +89,7 @@ function TarjetaDiseno({ proyecto, onBorrar }) {
 
 export default function MisProyectos() {
   const { user, loading: authLoading } = useAuth()
+  const { t, lang } = useLanguage()
   const [proyectos, setProyectos] = useState([])
   const [cargando, setCargando] = useState(true)
 
@@ -106,7 +108,7 @@ export default function MisProyectos() {
   }, [user])
 
   async function handleBorrar(id) {
-    if (!window.confirm('¿Eliminar este proyecto guardado?')) return
+    if (!window.confirm(t('misProyectos.confirmEliminar'))) return
     try {
       await borrarProyecto(id)
       setProyectos(prev => prev.filter(p => p.id !== id))
@@ -123,8 +125,8 @@ export default function MisProyectos() {
     <div className="mis-proyectos-page">
       <div className="page-hero page-hero--terracota">
         <div className="container">
-          <h1>Mis Proyectos</h1>
-          <p>Tus patrones generados y diseños guardados, siempre a mano.</p>
+          <h1>{t('misProyectos.heroTitulo')}</h1>
+          <p>{t('misProyectos.heroSubtitulo')}</p>
         </div>
       </div>
 
@@ -132,32 +134,32 @@ export default function MisProyectos() {
         <div className="container">
           {!authLoading && !user && (
             <p className="mis-proyectos-empty">
-              <Link to="/login">Inicia sesión</Link> para ver tus proyectos guardados.
+              <Link to="/login">{t('misProyectos.iniciaSesion')}</Link> {t('misProyectos.paraVer')}
             </p>
           )}
 
           {user && !cargando && proyectos.length === 0 && (
             <p className="mis-proyectos-empty">
-              Aún no has guardado ningún proyecto. Guarda un patrón desde el{' '}
-              <Link to="/asistente">Asistente IA</Link> o un diseño desde el{' '}
-              <Link to="/disenador">Diseñador</Link>.
+              {t('misProyectos.vacio1')}{' '}
+              <Link to="/asistente">{t('misProyectos.asistenteLink')}</Link> {t('misProyectos.vacio2')}{' '}
+              <Link to="/disenador">{t('misProyectos.disenadorLink')}</Link>.
             </p>
           )}
 
           {user && patrones.length > 0 && (
             <>
-              <h2 className="mis-proyectos-seccion">✦ Patrones</h2>
+              <h2 className="mis-proyectos-seccion">{t('misProyectos.patronesTitulo')}</h2>
               <div className="proyecto-list">
-                {patrones.map(p => <TarjetaPatron key={p.id} proyecto={p} onBorrar={handleBorrar} />)}
+                {patrones.map(p => <TarjetaPatron key={p.id} proyecto={p} onBorrar={handleBorrar} t={t} lang={lang} />)}
               </div>
             </>
           )}
 
           {user && disenos.length > 0 && (
             <>
-              <h2 className="mis-proyectos-seccion">◈ Diseños</h2>
+              <h2 className="mis-proyectos-seccion">{t('misProyectos.disenosTitulo')}</h2>
               <div className="proyecto-list">
-                {disenos.map(p => <TarjetaDiseno key={p.id} proyecto={p} onBorrar={handleBorrar} />)}
+                {disenos.map(p => <TarjetaDiseno key={p.id} proyecto={p} onBorrar={handleBorrar} t={t} lang={lang} />)}
               </div>
             </>
           )}

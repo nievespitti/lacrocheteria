@@ -1,15 +1,24 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useLanguage } from '../context/LanguageContext'
 import './Auth.css'
 
 export default function Login() {
   const { signIn } = useAuth()
+  const { t } = useLanguage()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const traducirError = (msg) => {
+    if (msg.includes('Invalid login credentials')) return t('auth.errInvalidCredentials')
+    if (msg.includes('Email not confirmed')) return t('auth.errEmailNoConfirmado')
+    if (msg.includes('Too many requests')) return t('auth.errTooManyRequests')
+    return msg
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -31,15 +40,15 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-card__header">
           <div className="auth-card__icon">🧶</div>
-          <h1 className="auth-card__title">Bienvenida de nuevo</h1>
-          <p className="auth-card__subtitle">Accede a tu cuenta de La CrocheterIA</p>
+          <h1 className="auth-card__title">{t('auth.loginTitulo')}</h1>
+          <p className="auth-card__subtitle">{t('auth.loginSubtitulo')}</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           {error && <div className="auth-error">{error}</div>}
 
           <div className="auth-field">
-            <label htmlFor="email">Correo electrónico</label>
+            <label htmlFor="email">{t('auth.emailLabel')}</label>
             <input
               id="email"
               type="email"
@@ -52,7 +61,7 @@ export default function Login() {
           </div>
 
           <div className="auth-field">
-            <label htmlFor="password">Contraseña</label>
+            <label htmlFor="password">{t('auth.passwordLabel')}</label>
             <input
               id="password"
               type="password"
@@ -65,22 +74,15 @@ export default function Login() {
           </div>
 
           <button type="submit" className="auth-submit" disabled={loading}>
-            {loading ? 'Entrando...' : 'Iniciar sesión'}
+            {loading ? t('auth.loginBtnCargando') : t('auth.loginBtn')}
           </button>
         </form>
 
         <p className="auth-footer">
-          ¿Aún no tienes cuenta?{' '}
-          <Link to="/registro">Regístrate gratis</Link>
+          {t('auth.noTienesCuenta')}{' '}
+          <Link to="/registro">{t('auth.registrateGratis')}</Link>
         </p>
       </div>
     </div>
   )
-}
-
-function traducirError(msg) {
-  if (msg.includes('Invalid login credentials')) return 'Correo o contraseña incorrectos.'
-  if (msg.includes('Email not confirmed')) return 'Confirma tu correo antes de iniciar sesión.'
-  if (msg.includes('Too many requests')) return 'Demasiados intentos. Espera un momento.'
-  return msg
 }

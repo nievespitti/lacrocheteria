@@ -1,37 +1,24 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button'
+import { useLanguage } from '../context/LanguageContext'
 import './SobreNosotras.css'
 
-const valores = [
-  {
-    icon: '🤲',
-    titulo: 'Artesanía con alma',
-    texto: 'Cada punto es intencional. Valoramos el proceso tanto como el resultado final.',
-  },
-  {
-    icon: '💡',
-    titulo: 'Innovación suave',
-    texto: 'La IA no reemplaza la creatividad humana, la amplifica y la inspira.',
-  },
-  {
-    icon: '🌱',
-    titulo: 'Comunidad primero',
-    texto: 'Creemos en compartir el conocimiento y crecer juntas, sin competencia.',
-  },
-  {
-    icon: '♻️',
-    titulo: 'Consumo consciente',
-    texto: 'Promovemos materiales naturales y la moda lenta frente al fast fashion.',
-  },
-]
-
 export default function SobreNosotras() {
+  const { t } = useLanguage()
+
+  const valores = [
+    { icon: '✦', titulo: t('sobre.valor1Titulo'), texto: t('sobre.valor1Texto') },
+    { icon: '◈', titulo: t('sobre.valor2Titulo'), texto: t('sobre.valor2Texto') },
+    { icon: '❋', titulo: t('sobre.valor3Titulo'), texto: t('sobre.valor3Texto') },
+    { icon: '✦', titulo: t('sobre.valor4Titulo'), texto: t('sobre.valor4Texto') },
+  ]
+
   return (
     <div className="sobre-page">
       <div className="page-hero page-hero--sage">
         <div className="container">
-          <h1>Sobre Nosotras</h1>
-          <p>La historia detrás de La CrocheterIA.</p>
+          <h1>{t('sobre.heroTitulo')}</h1>
+          <p>{t('sobre.heroSubtitulo')}</p>
         </div>
       </div>
 
@@ -39,22 +26,11 @@ export default function SobreNosotras() {
       <section className="section">
         <div className="container sobre-intro">
           <div className="sobre-intro__text">
-            <h2>Ganchillo e inteligencia artificial, juntos</h2>
-            <p>
-              La CrocheterIA nació de una pregunta sencilla: ¿y si la tecnología más avanzada
-              del momento pudiera ponerse al servicio de uno de los oficios más antiguos del mundo?
-            </p>
-            <p>
-              Somos apasionadas del crochet que encontramos en la inteligencia artificial una
-              herramienta para potenciar la creatividad, facilitar el aprendizaje y conectar a
-              artesanas de todo el mundo.
-            </p>
-            <p>
-              Aquí no vendemos patrones fríos: compartimos proyectos con contexto, con historia,
-              con el tipo de explicación que solo da alguien que ha pasado horas deshaciendo y
-              rehaciendo el mismo punto hasta que queda perfecto.
-            </p>
-            <Button as={Link} to="/contacto" variant="primary">Escríbenos</Button>
+            <h2>{t('sobre.introTitulo')}</h2>
+            <p>{t('sobre.introP1')}</p>
+            <p>{t('sobre.introP2')}</p>
+            <p>{t('sobre.introP3')}</p>
+            <Button as={Link} to="/contacto" variant="primary">{t('sobre.escribenos')}</Button>
           </div>
           <div className="sobre-intro__image">
             <img
@@ -70,8 +46,8 @@ export default function SobreNosotras() {
       <section className="section section--light">
         <div className="container">
           <div className="section__header">
-            <h2>Lo que nos guía</h2>
-            <p>Los valores que están detrás de cada patrón, tutorial y herramienta que creamos.</p>
+            <h2>{t('sobre.valoresTitulo')}</h2>
+            <p>{t('sobre.valoresSubtitulo')}</p>
           </div>
           <div className="valores-grid">
             {valores.map(v => (

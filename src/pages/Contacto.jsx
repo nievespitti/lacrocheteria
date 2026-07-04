@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import Button from '../components/ui/Button'
+import { useLanguage } from '../context/LanguageContext'
 import './Contacto.css'
 
 const WEB3FORMS_KEY = 'fc74df8c-3095-4fb2-8332-6ec7581acbe8'
 
 export default function Contacto() {
+  const { t } = useLanguage()
   const [form, setForm] = useState({ nombre: '', email: '', asunto: '', mensaje: '' })
   const [estado, setEstado] = useState('idle') // idle | enviando | ok | error
 
@@ -40,8 +42,8 @@ export default function Contacto() {
     <div className="contacto-page">
       <div className="page-hero page-hero--terracota">
         <div className="container">
-          <h1>Contacto</h1>
-          <p>¿Tienes una pregunta, propuesta o simplemente quieres saludar? Escríbenos.</p>
+          <h1>{t('contacto.heroTitulo')}</h1>
+          <p>{t('contacto.heroSubtitulo')}</p>
         </div>
       </div>
 
@@ -49,16 +51,13 @@ export default function Contacto() {
         <div className="container contacto-layout">
           {/* INFO */}
           <div className="contacto-info">
-            <h2>Hablemos</h2>
-            <p>
-              Respondemos a todos los mensajes en menos de 48 horas. Si prefieres el correo
-              directo, también puedes escribirnos a:
-            </p>
+            <h2>{t('contacto.hablemos')}</h2>
+            <p>{t('contacto.intro')}</p>
 
             <div className="contacto-dato">
               <span className="contacto-dato__icon">✉️</span>
               <div>
-                <strong>Email</strong>
+                <strong>{t('contacto.emailLabel')}</strong>
                 <a href="mailto:info@lacrocheteria.com">info@lacrocheteria.com</a>
               </div>
             </div>
@@ -66,16 +65,16 @@ export default function Contacto() {
             <div className="contacto-dato">
               <span className="contacto-dato__icon">🕐</span>
               <div>
-                <strong>Tiempo de respuesta</strong>
-                <span>Menos de 48 horas</span>
+                <strong>{t('contacto.tiempoLabel')}</strong>
+                <span>{t('contacto.tiempoValor')}</span>
               </div>
             </div>
 
             <div className="contacto-dato">
               <span className="contacto-dato__icon">🌍</span>
               <div>
-                <strong>Idioma</strong>
-                <span>Español (también hablamos English)</span>
+                <strong>{t('contacto.idiomaLabel')}</strong>
+                <span>{t('contacto.idiomaValor')}</span>
               </div>
             </div>
           </div>
@@ -85,70 +84,70 @@ export default function Contacto() {
             {estado === 'ok' ? (
               <div className="form-success">
                 <span className="form-success__emoji">🎉</span>
-                <h3>¡Mensaje enviado!</h3>
-                <p>Gracias por escribirnos. Te responderemos en breve.</p>
+                <h3>{t('contacto.exitoTitulo')}</h3>
+                <p>{t('contacto.exitoTexto')}</p>
                 <Button type="button" variant="secondary" onClick={() => setEstado('idle')}>
-                  Enviar otro mensaje
+                  {t('contacto.enviarOtro')}
                 </Button>
               </div>
             ) : (
               <>
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="nombre">Tu nombre *</label>
+                    <label htmlFor="nombre">{t('contacto.nombreLabel')}</label>
                     <input
                       id="nombre"
                       name="nombre"
                       type="text"
                       value={form.nombre}
                       onChange={handleChange}
-                      placeholder="María García"
+                      placeholder={t('contacto.nombrePlaceholder')}
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="email">Tu email *</label>
+                    <label htmlFor="email">{t('contacto.emailFieldLabel')}</label>
                     <input
                       id="email"
                       name="email"
                       type="email"
                       value={form.email}
                       onChange={handleChange}
-                      placeholder="maria@ejemplo.com"
+                      placeholder={t('contacto.emailPlaceholder')}
                       required
                     />
                   </div>
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="asunto">Asunto *</label>
+                  <label htmlFor="asunto">{t('contacto.asuntoLabel')}</label>
                   <input
                     id="asunto"
                     name="asunto"
                     type="text"
                     value={form.asunto}
                     onChange={handleChange}
-                    placeholder="¿En qué podemos ayudarte?"
+                    placeholder={t('contacto.asuntoPlaceholder')}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="mensaje">Mensaje *</label>
+                  <label htmlFor="mensaje">{t('contacto.mensajeLabel')}</label>
                   <textarea
                     id="mensaje"
                     name="mensaje"
                     rows="6"
                     value={form.mensaje}
                     onChange={handleChange}
-                    placeholder="Cuéntanos lo que necesitas..."
+                    placeholder={t('contacto.mensajePlaceholder')}
                     required
                   />
                 </div>
 
                 {estado === 'error' && (
                   <p className="form-error">
-                    Algo salió mal. Por favor, inténtalo de nuevo o escríbenos directamente a{' '}
+                    {t('contacto.errorMsg')}{' '}
                     <a href="mailto:info@lacrocheteria.com">info@lacrocheteria.com</a>
                   </p>
                 )}
@@ -158,7 +157,7 @@ export default function Contacto() {
                   variant="primary"
                   disabled={estado === 'enviando'}
                 >
-                  {estado === 'enviando' ? 'Enviando…' : 'Enviar mensaje'}
+                  {estado === 'enviando' ? t('contacto.enviando') : t('contacto.enviarMensaje')}
                 </Button>
               </>
             )}

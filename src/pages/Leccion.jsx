@@ -1,8 +1,10 @@
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { niveles } from '../data/niveles'
+import { useLanguage } from '../context/LanguageContext'
 import './Leccion.css'
 
 export default function Leccion() {
+  const { t } = useLanguage()
   const { nivelId, leccionId } = useParams()
 
   const nivel = niveles.find(n => n.id === nivelId)
@@ -21,7 +23,7 @@ export default function Leccion() {
       {/* SIDEBAR */}
       <aside className="leccion-sidebar">
         <Link to="/aprender" className="leccion-sidebar__back">
-          ← Todos los niveles
+          {t('leccion.volverNiveles')}
         </Link>
         <h3 className={`leccion-sidebar__nivel leccion-sidebar__nivel--${nivel.acento}`}>
           {nivel.icono} {nivel.nombre}
@@ -44,7 +46,7 @@ export default function Leccion() {
       <main className="leccion-main">
         <div className="leccion-content">
           <span className="leccion__etiqueta">
-            {nivel.nombre} · Lección {leccion.orden} de {nivel.lecciones.length}
+            {nivel.nombre} · {t('leccion.leccionPalabra')} {leccion.orden} {t('leccion.de')} {nivel.lecciones.length}
           </span>
           <h1 className="leccion__titulo">{leccion.titulo}</h1>
 
@@ -93,15 +95,15 @@ export default function Leccion() {
           {/* VÍDEO DE REFERENCIA */}
           {leccion.video_url && (
             <div className="leccion__video-ref">
-              <h4>Vídeo de referencia</h4>
-              <p>Complementa esta lección con un tutorial en vídeo:</p>
+              <h4>{t('leccion.videoTitulo')}</h4>
+              <p>{t('leccion.videoTexto')}</p>
               <a
                 href={leccion.video_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="leccion__video-link"
               >
-                Ver en YouTube →
+                {t('leccion.verYoutube')}
               </a>
             </div>
           )}
@@ -113,7 +115,7 @@ export default function Leccion() {
                 to={`/aprender/${nivel.id}/${prevLeccion.id}`}
                 className="leccion__pag-btn leccion__pag-btn--prev"
               >
-                <span className="leccion__pag-dir">← Anterior</span>
+                <span className="leccion__pag-dir">{t('leccion.anterior')}</span>
                 <span className="leccion__pag-titulo">{prevLeccion.titulo}</span>
               </Link>
             ) : (
@@ -124,13 +126,13 @@ export default function Leccion() {
                 to={`/aprender/${nivel.id}/${nextLeccion.id}`}
                 className="leccion__pag-btn leccion__pag-btn--next"
               >
-                <span className="leccion__pag-dir">Siguiente →</span>
+                <span className="leccion__pag-dir">{t('leccion.siguiente')}</span>
                 <span className="leccion__pag-titulo">{nextLeccion.titulo}</span>
               </Link>
             ) : (
               <Link to="/aprender" className="leccion__pag-btn leccion__pag-btn--next">
-                <span className="leccion__pag-dir">¡Nivel completado!</span>
-                <span className="leccion__pag-titulo">Volver a los niveles →</span>
+                <span className="leccion__pag-dir">{t('leccion.nivelCompletado')}</span>
+                <span className="leccion__pag-titulo">{t('leccion.volverNivelesBtn')}</span>
               </Link>
             )}
           </nav>
