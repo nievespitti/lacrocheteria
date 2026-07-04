@@ -1,3 +1,5 @@
+import { createClient } from '@supabase/supabase-js'
+
 function parseImagen(imagen) {
   if (typeof imagen !== 'string') return null
   const match = imagen.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/)
@@ -5,9 +7,25 @@ function parseImagen(imagen) {
   return { type: 'image', source: { type: 'base64', media_type: match[1], data: match[2] } }
 }
 
+async function getUsuarioAutenticado(req) {
+  const authHeader = req.headers.authorization || ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!token) return null
+
+  const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY)
+  const { data, error } = await supabase.auth.getUser(token)
+  if (error || !data?.user) return null
+  return data.user
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' })
+  }
+
+  const usuario = await getUsuarioAutenticado(req)
+  if (!usuario) {
+    return res.status(401).json({ error: 'Debes iniciar sesión para generar patrones' })
   }
 
   const { descripcion, nivel, materiales, idioma, imagen } = req.body

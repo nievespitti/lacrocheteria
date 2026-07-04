@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
+import { supabase } from '../lib/supabase'
 import './AsistenteIA.css'
 
 
@@ -80,9 +81,15 @@ export default function AsistenteIA() {
     setPatron('')
 
     try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Sesión no válida. Vuelve a iniciar sesión.')
+
       const res = await fetch('/api/patron', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagen }),
       })
 
