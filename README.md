@@ -1,12 +1,33 @@
-# React + Vite
+# La CrocheterIA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Web sobre crochet e inteligencia artificial: genera patrones de crochet con IA a partir de una descripción o una foto de referencia, e incluye rutas de aprendizaje con lecciones.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React 19 + Vite 7, CSS puro (sin TypeScript)
+- React Router v7
+- Supabase (autenticación y "Mis proyectos")
+- Vercel Functions (`api/patron.js`) + API de Anthropic (Claude) para generar patrones
+- i18n propio (español/inglés) en `src/i18n/`
 
-## Expanding the ESLint configuration
+## Desarrollo local
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+cp .env.example .env.local   # y rellenar las variables (ver .env.example)
+npm run dev                  # http://localhost:5173
+```
+
+Otros scripts: `npm run build`, `npm run preview`, `npm run lint`.
+
+## Variables de entorno
+
+Ver [`.env.example`](.env.example) para el detalle de cada una (Supabase, Anthropic).
+
+## Estructura
+
+Ver la sección "Estructura actual" en [`CLAUDE.md`](../CLAUDE.md) para el mapa completo de páginas, componentes y la función serverless.
+
+## Despliegue
+
+Desplegado en Vercel. Las rewrites de SPA están en `vercel.json`. Las env vars deben configurarse también en el proyecto de Vercel (Settings → Environment Variables).
