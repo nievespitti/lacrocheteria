@@ -305,6 +305,16 @@ export const translations = {
       tituloPromptDefault: 'Diseño sin título',
       archivoInvalido: 'El archivo no es un patrón válido.',
     },
+    chat: {
+      burbujaLabel: 'Asesórame',
+      titulo: '✦ Asesórame',
+      bienvenida: '¡Hola! Soy el asistente de La CrocheterIA. Pregúntame por dónde empezar, qué hay en cada sección o dónde conseguir materiales.',
+      placeholder: 'Escribe tu pregunta...',
+      enviar: 'Enviar',
+      cerrar: 'Cerrar chat',
+      pensando: 'Escribiendo...',
+      error: 'No he podido responder ahora mismo. Inténtalo de nuevo en un momento.',
+    },
   },
   en: {
     comun: {
@@ -572,6 +582,16 @@ export const translations = {
       tituloPrompt: 'Design title:',
       tituloPromptDefault: 'Untitled design',
       archivoInvalido: 'The file is not a valid pattern.',
+    },
+    chat: {
+      burbujaLabel: 'Ask us',
+      titulo: '✦ Ask us',
+      bienvenida: "Hi! I'm La CrocheterIA's assistant. Ask me where to start, what's in each section, or where to get materials.",
+      placeholder: 'Type your question...',
+      enviar: 'Send',
+      cerrar: 'Close chat',
+      pensando: 'Typing...',
+      error: "I couldn't answer right now. Please try again in a moment.",
     },
   },
 }
