@@ -246,6 +246,32 @@
 }
 
 /* ── Aviso de login requerido ── */
+.asistente-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--color-linen);
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+  padding: 16px 20px;
+  margin-bottom: 32px;
+}
+
+.asistente-aviso__icon {
+  color: var(--color-accent);
+  font-size: 1rem;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+.asistente-aviso p {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
 .asistente-login-required {
   background: #fff;
   border: 2px solid var(--color-linen);
@@ -359,6 +385,23 @@
 .patron__btn--save:disabled {
   opacity: 0.7;
   cursor: default;
+}
+
+.patron__feedback {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-linen);
+}
+
+.patron__btn--corregir {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 2px solid var(--color-linen);
+}
+
+.patron__btn--corregir:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .patron__body {

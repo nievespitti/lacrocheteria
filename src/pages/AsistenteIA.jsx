@@ -56,6 +56,10 @@ export default function AsistenteIA() {
   const [guardando, setGuardando] = useState(false)
   const [guardado, setGuardado] = useState(false)
   const [errorGuardar, setErrorGuardar] = useState(false)
+  const [mostrarCorreccion, setMostrarCorreccion] = useState(false)
+  const [correccion, setCorreccion] = useState('')
+  const [corrigiendo, setCorrigiendo] = useState(false)
+  const [errorCorregir, setErrorCorregir] = useState(false)
   const fotoInputRef = useRef(null)
   const nivel = niveles[nivelIndex]
 
@@ -105,6 +109,40 @@ export default function AsistenteIA() {
     }
   }
 
+  async function corregir() {
+    if (!correccion.trim() || corrigiendo) return
+    setCorrigiendo(true)
+    setErrorCorregir(false)
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('Sesión no válida. Vuelve a iniciar sesión.')
+
+      const res = await fetch('/api/patron', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagen, patronAnterior: patron, correccion }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
+
+      setPatron(data.patron)
+      setMostrarCorreccion(false)
+      setCorreccion('')
+      setGuardado(false)
+    } catch (err) {
+      console.error('Error al corregir patrón:', err)
+      setErrorCorregir(true)
+    } finally {
+      setCorrigiendo(false)
+    }
+  }
+
   function copiar() {
     navigator.clipboard.writeText(patron)
     setCopiado(true)
@@ -131,6 +169,9 @@ export default function AsistenteIA() {
     setImagen(null)
     setFotoError('')
     setGuardado(false)
+    setMostrarCorreccion(false)
+    setCorreccion('')
+    setErrorCorregir(false)
   }
 
   async function guardar() {
@@ -170,6 +211,11 @@ export default function AsistenteIA() {
 
       <section className="asistente-main">
         <div className="asistente-main__inner">
+
+          <div className="asistente-aviso">
+            <span className="asistente-aviso__icon">❋</span>
+            <p>{t('asistente.avisoAprendizaje')}</p>
+          </div>
 
           {!user && (
             <div className="asistente-login-required">
@@ -311,6 +357,50 @@ export default function AsistenteIA() {
                 </p>
               )}
               <PatronResultado texto={patron} />
+
+              <div className="patron__feedback">
+                {!mostrarCorreccion ? (
+                  <button
+                    type="button"
+                    className="patron__btn patron__btn--corregir"
+                    onClick={() => setMostrarCorreccion(true)}
+                  >
+                    {t('asistente.noEsCorrectoBtn')}
+                  </button>
+                ) : (
+                  <div className="form-field">
+                    <label className="form-label" htmlFor="correccion">
+                      {t('asistente.correccionLabel')}
+                    </label>
+                    <textarea
+                      id="correccion"
+                      className="form-textarea form-textarea--sm"
+                      placeholder={t('asistente.correccionPlaceholder')}
+                      value={correccion}
+                      onChange={e => setCorreccion(e.target.value)}
+                      rows={3}
+                    />
+                    {errorCorregir && (
+                      <p className="form-error">{t('asistente.errorCorregir')}</p>
+                    )}
+                    <button
+                      type="button"
+                      className="form-submit"
+                      onClick={corregir}
+                      disabled={!correccion.trim() || corrigiendo}
+                    >
+                      {corrigiendo ? (
+                        <span className="form-submit__loading">
+                          <span className="spinner" />
+                          {t('asistente.corrigiendo')}
+                        </span>
+                      ) : (
+                        t('asistente.corregirBtn')
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 

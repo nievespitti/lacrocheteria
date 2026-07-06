@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { reglasConstruccion, tecnicasAvanzadas, bloqueReferencia, promptCorreccion } from './crochetConocimiento.js'
 
 function parseImagen(imagen) {
   if (typeof imagen !== 'string') return null
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Debes iniciar sesión para generar patrones' })
   }
 
-  const { descripcion, nivel, materiales, idioma, imagen } = req.body
+  const { descripcion, nivel, materiales, idioma, imagen, patronAnterior, correccion } = req.body
 
   const imageBlock = parseImagen(imagen)
 
@@ -46,7 +47,7 @@ PROJECT: ${proyecto}
 LEVEL: ${nivel || 'Beginner'}
 AVAILABLE MATERIALS: ${materiales || 'the usual materials for this type of project'}
 ${imageBlock ? 'A reference image is attached: base the shape, colors and details of the final design on it.' : ''}
-
+${reglasConstruccion(idioma)}${tecnicasAvanzadas(idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
 Reply ONLY with the pattern, using this exact format (no introduction or closing remarks):
 
 ## [Project name]
@@ -54,6 +55,7 @@ Reply ONLY with the pattern, using this exact format (no introduction or closing
 **Difficulty:** ${nivel || 'Beginner'}
 **Estimated time:** [approximate time]
 **Approximate size:** [final size]
+**Construction method:** [continuous spiral / closed rounds / separate pieces — and a one-line reason why]
 
 ## Materials
 
@@ -62,6 +64,10 @@ Reply ONLY with the pattern, using this exact format (no introduction or closing
 ## Abbreviations
 
 - [abbreviation]: [full name]
+
+## Stitches used
+
+- [technique or stitch needed for this specific project, e.g. "invisible increase", "magic ring", "sc through both loops"]
 
 ## Instructions
 
@@ -81,7 +87,7 @@ PROYECTO: ${proyecto}
 NIVEL: ${nivel || 'Principiante'}
 MATERIALES DISPONIBLES: ${materiales || 'los habituales para este tipo de proyecto'}
 ${imageBlock ? 'Se adjunta una imagen de referencia: básate en ella para la forma, los colores y los detalles del diseño final.' : ''}
-
+${reglasConstruccion(idioma)}${tecnicasAvanzadas(idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
 Responde SOLO con el patrón, con este formato exacto (sin introducción ni despedida):
 
 ## [Nombre del proyecto]
@@ -89,6 +95,7 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 **Dificultad:** ${nivel || 'Principiante'}
 **Tiempo estimado:** [tiempo aproximado]
 **Medida aproximada:** [medida final]
+**Método de construcción:** [espiral continua / vueltas cerradas / piezas separadas — y una línea explicando por qué]
 
 ## Materiales
 
@@ -97,6 +104,10 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 ## Abreviaturas
 
 - [abreviatura]: [nombre completo]
+
+## Puntos a trabajar
+
+- [técnica o punto necesario para este proyecto concreto, ej. "aumento invisible", "anillo mágico", "pb por los dos hilos"]
 
 ## Instrucciones
 
@@ -112,6 +123,11 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 
 [2-3 consejos útiles adaptados al nivel ${nivel || 'Principiante'}]`
 
+  const mensajeInicial = { role: 'user', content: imageBlock ? [imageBlock, { type: 'text', text: prompt }] : prompt }
+  const messages = patronAnterior && correccion
+    ? [mensajeInicial, { role: 'assistant', content: patronAnterior }, { role: 'user', content: promptCorreccion(correccion, idioma) }]
+    : [mensajeInicial]
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -123,10 +139,7 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 8192,
-        messages: [{
-          role: 'user',
-          content: imageBlock ? [imageBlock, { type: 'text', text: prompt }] : prompt,
-        }],
+        messages,
       }),
     })
 
