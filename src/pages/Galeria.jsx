@@ -16,6 +16,8 @@ const proyectosPorCategoria = {
     { id: 6, placeholder: true },
     { id: 10, placeholder: true },
   ],
+  // Para añadir un bolso nuevo: 1) pon la foto en public/galeria/accesorios/bolso_0NN.png,
+  // 2) añade una línea aquí, 3) añade el título/descripción en galeriaProyectos (src/i18n/translations.js, es y en).
   Accesorios: [
     { id: 'bolso-002', imagen: '/galeria/accesorios/bolso_002.png' },
     { id: 'bolso-002-video', imagen: '/galeria/accesorios/bolso_002.mp4' },
@@ -24,6 +26,7 @@ const proyectosPorCategoria = {
     { id: 'bolso-005', imagen: '/galeria/accesorios/bolso_005.png' },
     { id: 'bolso-006', imagen: '/galeria/accesorios/bolso_006.png' },
     { id: 'bolso-007', imagen: '/galeria/accesorios/bolso_007.png' },
+    { id: 'bolso-008', imagen: '/galeria/accesorios/bolso_008.png' },
   ],
   Decoración: [
     { id: 4, placeholder: true },
