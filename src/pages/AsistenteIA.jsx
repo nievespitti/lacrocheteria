@@ -41,6 +41,8 @@ export function PatronResultado({ texto }) {
   )
 }
 
+const MAX_FOTOS = 3
+
 export default function AsistenteIA() {
   const { user } = useAuth()
   const { t, lang } = useLanguage()
@@ -48,7 +50,7 @@ export default function AsistenteIA() {
   const [descripcion, setDescripcion] = useState('')
   const [nivelIndex, setNivelIndex] = useState(0)
   const [materiales, setMateriales] = useState('')
-  const [imagen, setImagen] = useState(null)
+  const [imagenes, setImagenes] = useState([])
   const [fotoError, setFotoError] = useState('')
   const [estado, setEstado] = useState('idle') // idle | generando | ok | error
   const [patron, setPatron] = useState('')
@@ -66,6 +68,11 @@ export default function AsistenteIA() {
   function cargarImagen(e) {
     const file = e.target.files[0]
     if (!file) return
+    if (imagenes.length >= MAX_FOTOS) {
+      setFotoError(t('asistente.fotoLimiteAlcanzado'))
+      e.target.value = ''
+      return
+    }
     if (file.size > 3 * 1024 * 1024) {
       setFotoError(t('asistente.fotoDemasiadoGrande'))
       e.target.value = ''
@@ -73,14 +80,19 @@ export default function AsistenteIA() {
     }
     setFotoError('')
     const reader = new FileReader()
-    reader.onload = (ev) => setImagen(ev.target.result)
+    reader.onload = (ev) => setImagenes((prev) => [...prev, ev.target.result])
     reader.readAsDataURL(file)
     e.target.value = ''
   }
 
+  function quitarImagen(index) {
+    setImagenes((prev) => prev.filter((_, i) => i !== index))
+    setFotoError('')
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!user || (!descripcion.trim() && !imagen)) return
+    if (!user || (!descripcion.trim() && imagenes.length === 0)) return
     setEstado('generando')
     setPatron('')
 
@@ -94,7 +106,7 @@ export default function AsistenteIA() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagen }),
+        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagenes }),
       })
 
       const data = await res.json()
@@ -124,7 +136,7 @@ export default function AsistenteIA() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagen, patronAnterior: patron, correccion }),
+        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagenes, patronAnterior: patron, correccion }),
       })
 
       const data = await res.json()
@@ -166,7 +178,7 @@ export default function AsistenteIA() {
     setPatron('')
     setDescripcion('')
     setMateriales('')
-    setImagen(null)
+    setImagenes([])
     setFotoError('')
     setGuardado(false)
     setMostrarCorreccion(false)
@@ -230,7 +242,7 @@ export default function AsistenteIA() {
             <form className="asistente-form" onSubmit={handleSubmit}>
               <div className="form-field">
                 <label className="form-label" htmlFor="descripcion">
-                  {t('asistente.descripcionLabel')} {imagen && <span className="form-label__opt">{t('asistente.descripcionOpcionalConFoto')}</span>}
+                  {t('asistente.descripcionLabel')} {imagenes.length > 0 && <span className="form-label__opt">{t('asistente.descripcionOpcionalConFoto')}</span>}
                 </label>
                 <textarea
                   id="descripcion"
@@ -239,7 +251,7 @@ export default function AsistenteIA() {
                   value={descripcion}
                   onChange={e => setDescripcion(e.target.value)}
                   rows={4}
-                  required={!imagen}
+                  required={imagenes.length === 0}
                 />
               </div>
 
@@ -275,16 +287,21 @@ export default function AsistenteIA() {
 
               <div className="form-field">
                 <label className="form-label">
-                  {t('asistente.fotoLabel')} <span className="form-label__opt">{t('asistente.fotoOpcional')}</span>
+                  {t('asistente.fotoLabel')} <span className="form-label__opt">{t('asistente.fotoOpcionalMultiple')}</span>
                 </label>
-                {imagen ? (
-                  <div className="foto-preview">
-                    <img src={imagen} alt="" className="foto-preview__img" />
-                    <button type="button" className="foto-preview__remove" onClick={() => { setImagen(null); setFotoError('') }}>
-                      {t('asistente.quitarFoto')}
-                    </button>
+                {imagenes.length > 0 && (
+                  <div className="foto-preview-galeria">
+                    {imagenes.map((img, i) => (
+                      <div className="foto-preview" key={i}>
+                        <img src={img} alt="" className="foto-preview__img" />
+                        <button type="button" className="foto-preview__remove" onClick={() => quitarImagen(i)}>
+                          {t('asistente.quitarFoto')}
+                        </button>
+                      </div>
+                    ))}
                   </div>
-                ) : (
+                )}
+                {imagenes.length < MAX_FOTOS && (
                   <button type="button" className="foto-upload-btn" onClick={() => fotoInputRef.current.click()}>
                     {t('asistente.subirFoto')}
                   </button>
@@ -311,7 +328,7 @@ export default function AsistenteIA() {
               <button
                 type="submit"
                 className="form-submit"
-                disabled={estado === 'generando' || (!descripcion.trim() && !imagen)}
+                disabled={estado === 'generando' || (!descripcion.trim() && imagenes.length === 0)}
               >
                 {estado === 'generando' ? (
                   <span className="form-submit__loading">

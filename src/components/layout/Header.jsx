@@ -20,7 +20,12 @@ export default function Header() {
     { to: '/sobre-nosotras', label: t('header.sobreNosotras') },
     { to: '/contacto', label: t('header.contacto') },
   ]
-  const navLinks = user ? [...links, { to: '/mis-proyectos', label: t('header.misProyectos') }] : links
+  const esAdmin = user?.email === 'nievesgarciapitti@gmail.com'
+  const navLinks = [
+    ...links,
+    ...(user ? [{ to: '/mis-proyectos', label: t('header.misProyectos') }] : []),
+    ...(esAdmin ? [{ to: '/admin/correcciones', label: t('header.correcciones') }] : []),
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)

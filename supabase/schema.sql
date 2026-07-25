@@ -44,3 +44,45 @@ create policy "Borrar mis proyectos"
 -- necesita permiso de acceso a la tabla en sí (GRANT), o Postgres rechaza
 -- la petición antes siquiera de evaluar las políticas.
 grant select, insert, delete on public.proyectos_guardados to authenticated;
+
+-- ====================================================
+-- CORRECCIONES DE PATRONES — La CrocheterIA
+-- ====================================================
+-- Registro (solo añadir) de las correcciones que las usuarias hacen sobre
+-- patrones generados por el Asistente IA (botón "Este patrón no está bien"
+-- en AsistenteIA.jsx). Sirve para revisar qué falla en la práctica y mejorar
+-- api/crochetConocimiento.js con el tiempo. No guarda las fotos de referencia,
+-- solo si el proyecto tenía alguna.
+-- ====================================================
+
+create table if not exists public.correcciones_patrones (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  idioma text not null,
+  descripcion text,
+  nivel text,
+  materiales text,
+  tenia_foto boolean not null default false,
+  patron_anterior text not null,
+  correccion text not null,
+  patron_corregido text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table public.correcciones_patrones enable row level security;
+
+create policy "Crear mi correccion"
+  on public.correcciones_patrones for insert
+  with check (auth.uid() = user_id);
+
+-- Solo Nieves (dueña del proyecto) puede leer/borrar el registro completo —
+-- no hay tabla de roles en este proyecto, así que se gatea por email directamente.
+create policy "Solo Nieves ve las correcciones"
+  on public.correcciones_patrones for select
+  using (auth.jwt() ->> 'email' = 'nievesgarciapitti@gmail.com');
+
+create policy "Solo Nieves borra correcciones"
+  on public.correcciones_patrones for delete
+  using (auth.jwt() ->> 'email' = 'nievesgarciapitti@gmail.com');
+
+grant select, insert, delete on public.correcciones_patrones to authenticated;

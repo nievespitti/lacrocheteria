@@ -2,24 +2,60 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import { createClient } from '@supabase/supabase-js'
 import { systemPrompt } from './api/chatSystemPrompt.js'
-import { reglasConstruccion, tecnicasAvanzadas, bloqueReferencia, promptCorreccion } from './api/crochetConocimiento.js'
+import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './api/crochetConocimiento.js'
 
-function parseImagen(imagen) {
-  if (typeof imagen !== 'string') return null
-  const match = imagen.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/)
-  if (!match) return null
-  return { type: 'image', source: { type: 'base64', media_type: match[1], data: match[2] } }
+function parseImagenes(imagenes) {
+  if (!Array.isArray(imagenes)) return []
+  return imagenes
+    .map((imagen) => {
+      if (typeof imagen !== 'string') return null
+      const match = imagen.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,(.+)$/)
+      if (!match) return null
+      return { type: 'image', source: { type: 'base64', media_type: match[1], data: match[2] } }
+    })
+    .filter(Boolean)
+    .slice(0, 3)
 }
 
 async function getUsuarioAutenticado(req, env) {
   const authHeader = req.headers['authorization'] || ''
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null
-  if (!token) return null
+  if (!token) return { usuario: null, token: null }
 
   const supabase = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY)
   const { data, error } = await supabase.auth.getUser(token)
-  if (error || !data?.user) return null
-  return data.user
+  if (error || !data?.user) return { usuario: null, token: null }
+  return { usuario: data.user, token }
+}
+
+// Cliente de Supabase que actúa como la propia usuaria (reenviando su token),
+// para que las políticas RLS basadas en auth.uid() se cumplan sin necesitar
+// una service role key.
+function clienteComoUsuario(env, token) {
+  return createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  })
+}
+
+async function llamarAnthropic(env, messages) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': env.ANTHROPIC_API_KEY,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 8192, messages }),
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    const err = new Error(data.error?.message || 'Error de API')
+    err.status = response.status
+    throw err
+  }
+  const texto = data.content?.[0]?.text
+  if (!texto) throw new Error('Respuesta vacía')
+  return texto
 }
 
 export default defineConfig(({ mode }) => {
@@ -40,20 +76,21 @@ export default defineConfig(({ mode }) => {
             const chunks = []
             req.on('data', chunk => chunks.push(chunk))
             req.on('end', async () => {
+              res.setHeader('Content-Type', 'application/json')
               try {
-                const usuario = await getUsuarioAutenticado(req, env)
+                const { usuario, token } = await getUsuarioAutenticado(req, env)
                 if (!usuario) {
                   res.statusCode = 401
                   return res.end(JSON.stringify({ error: 'Debes iniciar sesión para generar patrones' }))
                 }
 
-                const { descripcion, nivel, materiales, idioma, imagen, patronAnterior, correccion } = JSON.parse(
+                const { descripcion, nivel, materiales, idioma, imagenes, patronAnterior, correccion } = JSON.parse(
                   Buffer.concat(chunks).toString()
                 )
 
-                const imageBlock = parseImagen(imagen)
+                const imageBlocks = parseImagenes(imagenes)
 
-                if (!descripcion && !imageBlock) {
+                if (!descripcion && imageBlocks.length === 0) {
                   res.statusCode = 400
                   return res.end(JSON.stringify({ error: 'Falta la descripción o una foto de referencia' }))
                 }
@@ -62,13 +99,23 @@ export default defineConfig(({ mode }) => {
                   ? 'the crochet piece shown in the attached reference photo'
                   : 'la pieza de crochet que se muestra en la foto de referencia adjunta')
 
+                const notaFoto = imageBlocks.length > 1
+                  ? (idioma === 'en'
+                    ? `${imageBlocks.length} reference images are attached (different angles/details of the same piece): base the shape, colors and details of the final design on the whole set, not on a single angle.`
+                    : `Se adjuntan ${imageBlocks.length} imágenes de referencia (distintos ángulos/detalles de la misma pieza): básate en el conjunto para la forma, los colores y los detalles del diseño final, no en un único ángulo.`)
+                  : imageBlocks.length === 1
+                    ? (idioma === 'en'
+                      ? 'A reference image is attached: base the shape, colors and details of the final design on it.'
+                      : 'Se adjunta una imagen de referencia: básate en ella para la forma, los colores y los detalles del diseño final.')
+                    : ''
+
                 const prompt = idioma === 'en' ? `You are a crochet expert. Generate a complete pattern in English for:
 
 PROJECT: ${proyecto}
 LEVEL: ${nivel || 'Beginner'}
 AVAILABLE MATERIALS: ${materiales || 'the usual materials for this type of project'}
-${imageBlock ? 'A reference image is attached: base the shape, colors and details of the final design on it.' : ''}
-${reglasConstruccion(idioma)}${tecnicasAvanzadas(idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
+${notaFoto}
+${reglasConstruccion(idioma)}${bloqueTecnicas(descripcion, materiales, idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
 Reply ONLY with the pattern, using this exact format (no introduction or closing remarks):
 
 ## [Project name]
@@ -106,8 +153,8 @@ Reply ONLY with the pattern, using this exact format (no introduction or closing
 PROYECTO: ${proyecto}
 NIVEL: ${nivel || 'Principiante'}
 MATERIALES DISPONIBLES: ${materiales || 'los habituales para este tipo de proyecto'}
-${imageBlock ? 'Se adjunta una imagen de referencia: básate en ella para la forma, los colores y los detalles del diseño final.' : ''}
-${reglasConstruccion(idioma)}${tecnicasAvanzadas(idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
+${notaFoto}
+${reglasConstruccion(idioma)}${bloqueTecnicas(descripcion, materiales, idioma)}${bloqueReferencia(descripcion, materiales, idioma)}
 Responde SOLO con el patrón, con este formato exacto (sin introducción ni despedida):
 
 ## [Nombre del proyecto]
@@ -142,39 +189,47 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 
 [2-3 consejos adaptados al nivel ${nivel || 'Principiante'}]`
 
-                const apiKey = env.ANTHROPIC_API_KEY
-
-                const mensajeInicial = { role: 'user', content: imageBlock ? [imageBlock, { type: 'text', text: prompt }] : prompt }
-                const messages = patronAnterior && correccion
+                const mensajeInicial = { role: 'user', content: imageBlocks.length > 0 ? [...imageBlocks, { type: 'text', text: prompt }] : prompt }
+                const esCorreccion = Boolean(patronAnterior && correccion)
+                const messages = esCorreccion
                   ? [mensajeInicial, { role: 'assistant', content: patronAnterior }, { role: 'user', content: promptCorreccion(correccion, idioma) }]
                   : [mensajeInicial]
 
-                const response = await fetch('https://api.anthropic.com/v1/messages', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                  },
-                  body: JSON.stringify({
-                    model: 'claude-sonnet-4-6',
-                    max_tokens: 8192,
-                    messages,
-                  }),
-                })
+                let texto = await llamarAnthropic(env, messages)
 
-                const data = await response.json()
-                const texto = data.content?.[0]?.text
-
-                res.setHeader('Content-Type', 'application/json')
-                if (!texto) {
-                  res.statusCode = 500
-                  return res.end(JSON.stringify({ error: data.error?.message || 'Respuesta vacía de la IA' }))
+                const sospechosas = verificarConteo(texto, idioma)
+                if (sospechosas.length > 0) {
+                  try {
+                    texto = await llamarAnthropic(env, [
+                      ...messages,
+                      { role: 'assistant', content: texto },
+                      { role: 'user', content: promptVerificacion(sospechosas, idioma) },
+                    ])
+                  } catch (err) {
+                    console.error('Reintento de verificación de conteo falló, se entrega el patrón original:', err)
+                  }
                 }
+
+                if (esCorreccion && token) {
+                  clienteComoUsuario(env, token)
+                    .from('correcciones_patrones')
+                    .insert({
+                      user_id: usuario.id,
+                      idioma,
+                      descripcion,
+                      nivel,
+                      materiales,
+                      tenia_foto: imageBlocks.length > 0,
+                      patron_anterior: patronAnterior,
+                      correccion,
+                      patron_corregido: texto,
+                    })
+                    .then(({ error }) => { if (error) console.error('No se pudo registrar la corrección:', error) })
+                }
+
                 res.end(JSON.stringify({ patron: texto }))
               } catch (err) {
-                res.statusCode = 500
-                res.setHeader('Content-Type', 'application/json')
+                res.statusCode = err.status || 500
                 res.end(JSON.stringify({ error: err.message }))
               }
             })
