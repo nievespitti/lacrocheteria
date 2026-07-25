@@ -3,6 +3,11 @@ import react from '@vitejs/plugin-react'
 import { createClient } from '@supabase/supabase-js'
 import { systemPrompt } from './api/chatSystemPrompt.js'
 import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './api/crochetConocimiento.js'
+import { limiteExcedido, obtenerIP } from './api/rateLimit.js'
+
+const MAX_PETICIONES_CHAT = 15
+const VENTANA_CHAT_MS = 10 * 60 * 1000
+const LIMITE_PATRONES_DIA = 15
 
 function parseImagenes(imagenes) {
   if (!Array.isArray(imagenes)) return []
@@ -87,6 +92,25 @@ export default defineConfig(({ mode }) => {
                 const { descripcion, nivel, materiales, idioma, imagenes, patronAnterior, correccion } = JSON.parse(
                   Buffer.concat(chunks).toString()
                 )
+
+                const supabaseUsuario = clienteComoUsuario(env, token)
+
+                const desde = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+                const { count, error: errorConteoUso } = await supabaseUsuario
+                  .from('uso_patron')
+                  .select('id', { count: 'exact', head: true })
+                  .eq('user_id', usuario.id)
+                  .gte('created_at', desde)
+
+                if (errorConteoUso) console.error('No se pudo comprobar el límite de uso:', errorConteoUso)
+                if (!errorConteoUso && count >= LIMITE_PATRONES_DIA) {
+                  res.statusCode = 429
+                  return res.end(JSON.stringify({
+                    error: idioma === 'en'
+                      ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
+                      : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
+                  }))
+                }
 
                 const imageBlocks = parseImagenes(imagenes)
 
@@ -210,8 +234,13 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
                   }
                 }
 
-                if (esCorreccion && token) {
-                  clienteComoUsuario(env, token)
+                supabaseUsuario
+                  .from('uso_patron')
+                  .insert({ user_id: usuario.id })
+                  .then(({ error }) => { if (error) console.error('No se pudo registrar el uso:', error) })
+
+                if (esCorreccion) {
+                  supabaseUsuario
                     .from('correcciones_patrones')
                     .insert({
                       user_id: usuario.id,
@@ -251,6 +280,15 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
               res.setHeader('Content-Type', 'application/json')
               try {
                 const { mensajes, idioma } = JSON.parse(Buffer.concat(chunks).toString())
+
+                if (limiteExcedido(`chat:${obtenerIP(req)}`, MAX_PETICIONES_CHAT, VENTANA_CHAT_MS)) {
+                  res.statusCode = 429
+                  return res.end(JSON.stringify({
+                    error: idioma === 'en'
+                      ? 'Too many messages in a short time. Please wait a few minutes and try again.'
+                      : 'Demasiados mensajes en poco tiempo. Espera unos minutos y vuelve a intentarlo.',
+                  }))
+                }
 
                 if (!Array.isArray(mensajes) || mensajes.length === 0) {
                   res.statusCode = 400

@@ -1,6 +1,9 @@
 import { systemPrompt } from './chatSystemPrompt.js'
+import { limiteExcedido, obtenerIP } from './rateLimit.js'
 
 const MAX_MENSAJES = 20
+const MAX_PETICIONES_CHAT = 15
+const VENTANA_CHAT_MS = 10 * 60 * 1000
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,6 +11,14 @@ export default async function handler(req, res) {
   }
 
   const { mensajes, idioma } = req.body
+
+  if (limiteExcedido(`chat:${obtenerIP(req)}`, MAX_PETICIONES_CHAT, VENTANA_CHAT_MS)) {
+    return res.status(429).json({
+      error: idioma === 'en'
+        ? 'Too many messages in a short time. Please wait a few minutes and try again.'
+        : 'Demasiados mensajes en poco tiempo. Espera unos minutos y vuelve a intentarlo.',
+    })
+  }
 
   if (!Array.isArray(mensajes) || mensajes.length === 0) {
     return res.status(400).json({ error: 'Falta la conversación' })

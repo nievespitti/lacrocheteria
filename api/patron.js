@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './crochetConocimiento.js'
 
+const LIMITE_PATRONES_DIA = 15
+
 function parseImagenes(imagenes) {
   if (!Array.isArray(imagenes)) return []
   return imagenes
@@ -66,6 +68,24 @@ export default async function handler(req, res) {
   }
 
   const { descripcion, nivel, materiales, idioma, imagenes, patronAnterior, correccion } = req.body
+
+  const supabaseUsuario = clienteComoUsuario(token)
+
+  const desde = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+  const { count, error: errorConteoUso } = await supabaseUsuario
+    .from('uso_patron')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', usuario.id)
+    .gte('created_at', desde)
+
+  if (errorConteoUso) console.error('No se pudo comprobar el límite de uso:', errorConteoUso)
+  if (!errorConteoUso && count >= LIMITE_PATRONES_DIA) {
+    return res.status(429).json({
+      error: idioma === 'en'
+        ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
+        : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
+    })
+  }
 
   const imageBlocks = parseImagenes(imagenes)
 
@@ -193,8 +213,13 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
       }
     }
 
-    if (esCorreccion && token) {
-      clienteComoUsuario(token)
+    supabaseUsuario
+      .from('uso_patron')
+      .insert({ user_id: usuario.id })
+      .then(({ error }) => { if (error) console.error('No se pudo registrar el uso:', error) })
+
+    if (esCorreccion) {
+      supabaseUsuario
         .from('correcciones_patrones')
         .insert({
           user_id: usuario.id,

@@ -86,3 +86,34 @@ create policy "Solo Nieves borra correcciones"
   using (auth.jwt() ->> 'email' = 'nievesgarciapitti@gmail.com');
 
 grant select, insert, delete on public.correcciones_patrones to authenticated;
+
+-- ====================================================
+-- USO DEL ASISTENTE IA — límite diario de generaciones
+-- ====================================================
+-- Cada llamada a /api/patron que llega a generar un patrón (o una
+-- corrección) inserta una fila aquí. Antes de generar, el servidor cuenta
+-- las filas de las últimas 24h para la usuaria y corta si supera el límite.
+-- Sirve para acotar el coste de la API de Anthropic (Sonnet) si alguien
+-- abusa o hay un bucle accidental en el cliente.
+-- ====================================================
+
+create table if not exists public.uso_patron (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists uso_patron_user_created_idx
+  on public.uso_patron(user_id, created_at);
+
+alter table public.uso_patron enable row level security;
+
+create policy "Registrar mi uso"
+  on public.uso_patron for insert
+  with check (auth.uid() = user_id);
+
+create policy "Ver mi propio uso"
+  on public.uso_patron for select
+  using (auth.uid() = user_id);
+
+grant select, insert on public.uso_patron to authenticated;
