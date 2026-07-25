@@ -33,6 +33,243 @@ export const PATRONES_REFERENCIA = [
   //   titulo: 'Bolso redondo en espiral',
   //   texto: `## Bolso redondo en espiral\n...(patrón completo verificado)...`,
   // },
+  {
+    categoria: 'amigurumi-conejo-conejito-oso-osito-peluche-muñeco-muneco-animalito',
+    titulo: 'Amigurumi animal básico: cabeza, cuerpo, brazos, piernas y orejas',
+    texto: `## Amigurumi animal básico (cabeza, cuerpo, brazos, piernas, orejas)
+
+**Dificultad:** Principiante-intermedio
+**Método de construcción:** cada pieza se teje por separado, en espiral continua (sin cerrar vuelta), con marcador de punto en el primer punto de cada vuelta. Las piezas se rellenan y se cosen entre sí al terminar.
+
+## Materiales
+
+- Hilo de algodón o mezcla, grosor medio
+- Gancho 2,5-3,5 mm según el hilo
+- Ojos de seguridad
+- Relleno de fibra siliconada
+- Aguja lanera, marcadores de punto, tijeras
+
+## Abreviaturas
+
+- am: anillo mágico
+- pb: punto bajo
+- aum: aumento (2 pb en el mismo punto)
+- dism: disminución (2 pb juntos, invisible si es posible)
+- cad: cadeneta
+
+## Instrucciones
+
+### Cabeza (esfera)
+
+**Vuelta 1:** 8 pb en am (8 puntos)
+**Vuelta 2:** 8 aum (16 puntos)
+**Vuelta 3:** (1 pb, 1 aum) x8 (24 puntos)
+**Vuelta 4:** (2 pb, 1 aum) x8 (32 puntos)
+**Vuelta 5:** (3 pb, 1 aum) x8 (40 puntos)
+**Vueltas 6-12:** teje recto sin aumentar, 40 pb cada vuelta (7 vueltas). Coloca los ojos de seguridad entre las vueltas 8 y 9, centrados y separados según el tamaño de cara deseado — antes de rellenar del todo, porque una vez cerrada la pieza ya no se puede fijar el respaldo del ojo.
+**Vuelta 13:** (3 pb, 1 dism) x8 (32 puntos)
+**Vuelta 14:** (2 pb, 1 dism) x8 (24 puntos)
+**Vuelta 15:** (1 pb, 1 dism) x8 (16 puntos)
+**Vuelta 16:** 8 dism (8 puntos)
+
+Rellena bien antes de cerrar del todo. Remata pasando la hebra por los puntos restantes y tirando (cierre de bolsita), dejando hebra larga para coser al cuerpo.
+
+### Cuerpo
+
+**Vuelta 1:** 8 pb en am (8 puntos)
+**Vuelta 2:** 8 aum (16 puntos)
+**Vuelta 3:** (1 pb, 1 aum) x8 (24 puntos)
+**Vuelta 4:** (1 pb, 1 aum) x12 (36 puntos)
+**Vueltas 5-12:** teje recto, 36 pb cada vuelta (8 vueltas).
+**Vuelta 13:** (1 pb, 1 dism) x12 (24 puntos)
+**Vuelta 14:** teje recto, 24 pb.
+
+Rellena progresivamente mientras tejes, no todo al final — es mucho más difícil meter relleno por un hueco pequeño ya cerrado. Cierra dejando hebra larga para coser la cabeza.
+
+### Brazos (x2)
+
+**Vuelta 1:** 6 pb en am (6 puntos)
+**Vuelta 2:** 6 aum (12 puntos)
+**Vueltas 3-8:** teje recto, 12 pb cada vuelta (6 vueltas).
+**Vuelta 9:** (1 pb, 1 dism) x4 (8 puntos)
+
+Relleno mínimo, solo en la base, para que caigan blandos. Deja hebra larga para coser a la altura de los hombros.
+
+### Piernas (x2)
+
+**Vuelta 1:** 6 pb en am (6 puntos)
+**Vuelta 2:** 6 aum (12 puntos)
+**Vueltas 3 en adelante:** teje recto, 12 pb cada vuelta, hasta la altura deseada.
+
+Relleno ligero, deja hebra larga. Cose las dos piernas separadas en la base del cuerpo para que la pieza pueda sentarse.
+
+### Orejas (x2)
+
+**Vuelta 1:** 8 pb en am (8 puntos)
+**Vuelta 2:** 8 aum (16 puntos)
+**Vuelta 3:** (3 pb, 1 aum) x4 (20 puntos)
+**Vueltas 4-9:** teje recto, 20 pb cada vuelta (6 vueltas).
+**Vuelta 10:** (3 pb, 1 dism) x4 (16 puntos)
+**Vuelta 11:** teje recto, 16 pb.
+
+Sin relleno o relleno mínimo en la base, para que caigan con naturalidad. Cóselas en la parte superior de la cabeza, ligeramente inclinadas hacia atrás.
+
+## Acabado
+
+1. Cose la cabeza centrada y firme al cuerpo.
+2. Cose los brazos a la altura de los hombros.
+3. Cose las piernas separadas en la base, para que la pieza se pueda sentar.
+4. Cose las orejas en la parte superior, inclinadas hacia atrás.
+5. Borda la cara (naricita, boca) con hilo fino en un color de contraste.
+
+## Consejos
+
+- Usa alfileres para probar la posición de ojos y orejas antes de coser definitivamente.
+- Cada vuelta recta debe mantener el mismo conteo que la anterior: si no cuadra, revisa antes de seguir tejiendo.`,
+  },
+  {
+    categoria: 'koala',
+    titulo: 'Amigurumi koala: piernas fusionadas en el cuerpo desde un óvalo en espiral',
+    texto: `## Amigurumi koala (piernas fusionadas en un cuerpo continuo)
+
+**Dificultad:** Intermedio
+**Método de construcción:** se empieza por las patitas y se sube hacia el cuerpo tejiendo todo en una sola pieza continua. Las patas se tejen por separado como óvalos en espiral y luego se fusionan en una única vuelta mediante un puente de cadeneta (ver técnica de "fusión de piezas tubulares" en las técnicas avanzadas). Cabeza y patas también parten de un óvalo en espiral. Orejas y brazos se tejen aparte y se cosen al final.
+
+## Materiales
+
+- Hilo de algodón o mezcla algodón/acrílico, grosor medio (aprox. 300 m / 100 g): gris para el cuerpo, un color a elección para el overol
+- Gancho 2,5 mm
+- Ojos de seguridad 9 mm
+- Hilo fino aparte para bordar la cara
+- Relleno de fibra siliconada, aguja lanera, marcadores de punto, tijeras
+
+## Abreviaturas
+
+- am: anillo mágico
+- pb: punto bajo
+- cad: cadeneta
+- aum: aumento (2 pb en el mismo punto)
+- dism: disminución invisible (2 pb juntos)
+- aum triple: 3 pb en el mismo punto (se usa en los extremos del óvalo inicial)
+
+## Instrucciones
+
+### Pata derecha (óvalo en espiral)
+
+**Vuelta 1:** 7 cad, 5 pb, 1 aum triple, 4 pb, 1 aum (14 puntos)
+**Vuelta 2:** 1 aum, 4 pb, (1 aum) x3, 4 pb, (1 aum) x2 (20 puntos)
+**Vuelta 3:** 1 pb, 1 aum, 4 pb, (1 pb, 1 aum) x3, 4 pb, (1 pb, 1 aum) x2 (26 puntos)
+**Vuelta 4:** teje recto, 26 pb.
+**Vuelta 5:** 9 pb, 1 dism, 1 pb, 1 dism, 10 pb, 1 dism (23 puntos)
+**Vuelta 6:** 9 pb, 2 dism, 8 pb, 1 dism (20 puntos)
+**Vuelta 7:** 1 dism, 7 pb, 1 dism, 9 pb (18 puntos)
+**Vuelta 8:** 8 pb, 1 dism, 6 pb, 1 dism (16 puntos)
+**Vuelta 9:** teje recto, 16 pb.
+**Vuelta 10:** 7 pb, (1 aum) x2, 7 pb (18 puntos)
+
+Deja esta pata en espera. Teje la pata izquierda igual, de la vuelta 1 a la 10. Rellena las dos patas.
+
+### Unión de las patas en el cuerpo
+
+**Vuelta 11:** al terminar la vuelta 10 de la pata izquierda, teje 5 cadenas y únelas con un punto bajo al primer punto de la vuelta 10 de la pata derecha (ese punto pasa a ser el nuevo inicio de vuelta). Continúa tejiendo alrededor de las dos patas más el puente de cadenetas — pierna derecha completa, 5 pb sobre las cadenas, pierna izquierda completa, 5 pb sobre el otro lado de las cadenas — con algunos aumentos repartidos para abrir el cuerpo, hasta llegar a (50 puntos)
+**Vueltas 12-13:** teje recto, 50 pb cada vuelta.
+**Vuelta 14:** 9 pb, 1 aum, (1 pb, 1 aum) x2, 20 pb, 1 aum, (1 pb, 1 aum) x2, 11 pb (56 puntos)
+**Vuelta 15:** teje recto, 56 pb.
+**Vuelta 16:** 11 pb, 1 aum, (1 pb, 1 aum) x2, 23 pb, 1 aum, (1 pb, 1 aum) x2, 12 pb (62 puntos)
+**Vueltas 17-18:** teje recto, 62 pb cada vuelta.
+**Vuelta 19:** 7 pb, (1 pb, 1 dism) x5, 16 pb, (1 pb, 1 dism) x5, 9 pb (52 puntos)
+**Vuelta 20:** 7 pb, (1 pb, 1 dism) x3, 17 pb, (1 pb, 1 dism) x3, 10 pb (46 puntos)
+**Vuelta 21:** teje recto, 46 pb.
+**Vuelta 22:** 1 dism, 19 pb, 1 dism, 23 pb (44 puntos)
+**Vuelta 23:** (9 pb, 1 dism) x4 (40 puntos)
+**Vuelta 24:** (2 pb, 1 dism) x10 (30 puntos)
+**Vuelta 25:** teje recto, 30 pb.
+
+Remata dejando hebra larga para coser la cabeza.
+
+### Cabeza (óvalo en espiral)
+
+**Vuelta 1:** 12 cad, 10 pb, 1 aum triple, 9 pb, 1 aum (24 puntos)
+**Vuelta 2:** 1 aum, 9 pb, (1 aum) x3, 9 pb, (1 aum) x2 (30 puntos)
+**Vuelta 3:** 1 pb, 1 aum, 9 pb, (1 pb, 1 aum) x3, 9 pb, (1 pb, 1 aum) x2 (36 puntos)
+**Vuelta 4:** 2 pb, 1 aum, 9 pb, (2 pb, 1 aum) x3, 9 pb, (2 pb, 1 aum) x2 (42 puntos)
+**Vuelta 5:** 3 pb, 1 aum, 9 pb, (3 pb, 1 aum) x3, 9 pb, (3 pb, 1 aum) x2 (48 puntos)
+**Vuelta 6:** 4 pb, 1 aum, 9 pb, (4 pb, 1 aum) x3, 9 pb, (4 pb, 1 aum) x2 (54 puntos)
+**Vuelta 7:** 5 pb, 1 aum, 9 pb, (5 pb, 1 aum) x3, 9 pb, (5 pb, 1 aum) x2 (60 puntos)
+**Vuelta 8:** 6 pb, 1 aum, 9 pb, (6 pb, 1 aum) x3, 9 pb, (6 pb, 1 aum) x2 (66 puntos)
+**Vuelta 9:** teje recto, 66 pb.
+**Vueltas 10-18:** teje recto, 66 pb cada vuelta (9 vueltas).
+**Vuelta 19:** 6 pb, 1 dism, 9 pb, (6 pb, 1 dism) x3, 9 pb, (6 pb, 1 dism) x2 (60 puntos)
+**Vuelta 20:** 5 pb, 1 dism, 9 pb, (5 pb, 1 dism) x3, 9 pb, (5 pb, 1 dism) x2 (54 puntos)
+
+Coloca los ojos de seguridad entre las vueltas 13 y 14, con 12 puntos de separación entre ellos.
+
+**Vuelta 21:** 4 pb, 1 dism, 9 pb, (4 pb, 1 dism) x3, 9 pb, (4 pb, 1 dism) x2 (48 puntos)
+**Vuelta 22:** 3 pb, 1 dism, 9 pb, (3 pb, 1 dism) x3, 9 pb, (3 pb, 1 dism) x2 (42 puntos)
+
+Empieza a rellenar poco a poco a partir de aquí, mientras sigues tejiendo.
+
+**Vuelta 23:** teje recto, 42 pb.
+**Vuelta 24:** (5 pb, 1 dism) x6 (36 puntos)
+**Vuelta 25:** (4 pb, 1 dism) x6 (30 puntos)
+**Vuelta 26:** (3 pb, 1 dism) x6 (24 puntos)
+**Vuelta 27:** (2 pb, 1 dism) x6 (18 puntos)
+**Vuelta 28:** (1 pb, 1 dism) x6 (12 puntos)
+
+Remata dejando hebra larga. Pasa la hebra de forma envolvente por los 12 puntos que quedan y tira para cerrar el hueco.
+
+### Orejas (x2, anillo mágico)
+
+**Vuelta 1:** 7 pb en am (7 puntos)
+**Vuelta 2:** 7 aum (14 puntos)
+**Vuelta 3:** (1 pb, 1 aum) x7 (21 puntos)
+**Vuelta 4:** (2 pb, 1 aum) x7 (28 puntos)
+**Vuelta 5:** (3 pb, 1 aum) x7 (35 puntos)
+**Vuelta 6:** (4 pb, 1 aum) x7 (42 puntos)
+**Vuelta 7:** (5 pb, 1 aum) x7 (49 puntos)
+**Vueltas 8-13:** teje recto, 49 pb cada vuelta (6 vueltas).
+**Vuelta 14:** (5 pb, 1 dism) x7 (42 puntos)
+**Vuelta 15:** (4 pb, 1 dism) x7 (35 puntos)
+**Vuelta 16:** (3 pb, 1 dism) x7 (28 puntos)
+**Vuelta 17:** dobla la pieza por la mitad y ciérrala en plano con 14 pb.
+
+Relleno opcional (mínimo o ninguno). Cose las orejas a la cabeza a la altura de la vuelta 6, contando desde la coronilla hacia abajo.
+
+### Brazos (x2, anillo mágico)
+
+**Vuelta 1:** 6 pb en am (6 puntos)
+**Vuelta 2:** 6 aum (12 puntos)
+**Vuelta 3:** (1 pb, 1 aum) x6 (18 puntos)
+**Vueltas 4-5:** teje recto, 18 pb cada vuelta.
+**Vuelta 6:** (1 pb, 1 dism) x6 (12 puntos)
+**Vueltas 7-12:** teje recto, 12 pb cada vuelta.
+
+Cierra en plano con punto bajo y cose los brazos al cuerpo.
+
+### Nariz (tejida en hileras, ida y vuelta)
+
+**Fila 1:** 8 cad, 7 pb sobre las cadenas (7 puntos)
+**Filas 2-4:** 1 cad de subida, 7 pb.
+
+Bordea las 4 caras del rectángulo resultante con punto bajo y añade 1-2 vueltas más de punto bajo alrededor para dar grosor. Rellena ligeramente y cose a la cabeza, centrada entre los ojos.
+
+### Overol (opcional, punto alto)
+
+Teje una cadena base que rodee la cintura del koala y únela en redondo con punto raso. Trabaja 3 vueltas de punto alto (2 cadenetas de subida en cada vuelta). Divide el trabajo por la mitad para separar las dos perneras y teje cada una por separado, 3 vueltas más de punto alto. Para los tirantes, une el hilo en la parte trasera central y teje una cadeneta larga; vuelve sobre ella en medio punto alto y cose cada tirante a la parte delantera.
+
+## Acabado
+
+1. Cose la cabeza a la parte superior del cuerpo.
+2. Cose las orejas a la altura de la vuelta 6 de la cabeza.
+3. Cose los brazos a ambos lados del cuerpo.
+4. Cose la nariz centrada entre los ojos.
+5. Borda cejas y boca con hilo fino oscuro; añade una línea clara bajo los ojos y unos flecos en la coronilla para simular el pelo.
+
+## Consejos
+
+- Verifica que las dos patas tengan exactamente el mismo conteo antes de fusionarlas en la vuelta 11 — cualquier diferencia se arrastra al resto del cuerpo.
+- Rellena las patas antes de la fusión: después de unirlas es mucho más difícil acceder a su interior.`,
+  },
 ]
 
 function elegirReferencia(descripcion, materiales) {
@@ -350,6 +587,9 @@ export function verificarConteo(textoPatron, idioma) {
   while ((match = regex.exec(textoPatron)) !== null) {
     const numero = match[1]
     const cuerpo = match[2]
+    // "Vuelta 1" siempre marca el inicio de una pieza nueva (cabeza, brazos...):
+    // no arrastres el conteo de la pieza anterior a través de ese reinicio.
+    if (numero === '1') conteoAnterior = null
     const declarado = extraerConteoDeclarado(cuerpo)
     if (declarado === null) { conteoAnterior = null; continue }
 

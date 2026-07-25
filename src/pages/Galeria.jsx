@@ -11,10 +11,16 @@ const proyectosPorCategoria = {
     { id: 5, placeholder: true },
     { id: 9, placeholder: true },
   ],
+  // Para añadir una prenda nueva: 1) pon la foto en public/galeria/ropa/ropa_0N.png,
+  // 2) añade una línea aquí, 3) añade el título/descripción en galeriaProyectos (src/i18n/translations.js, es y en).
   Ropa: [
-    { id: 2, placeholder: true },
-    { id: 6, placeholder: true },
-    { id: 10, placeholder: true },
+    { id: 'ropa-001', imagen: '/galeria/ropa/ropa_01.png' },
+    { id: 'ropa-002', imagen: '/galeria/ropa/ropa_02.png' },
+    { id: 'ropa-003', imagen: '/galeria/ropa/ropa_03.png' },
+    { id: 'ropa-004', imagen: '/galeria/ropa/ropa_04.png' },
+    { id: 'ropa-005', imagen: '/galeria/ropa/ropa_05.png' },
+    { id: 'ropa-006', imagen: '/galeria/ropa/ropa_06.png' },
+    { id: 'ropa-007', imagen: '/galeria/ropa/ropa_07.png' },
   ],
   // Para añadir un bolso nuevo: 1) pon la foto en public/galeria/accesorios/bolso_0NN.png,
   // 2) añade una línea aquí, 3) añade el título/descripción en galeriaProyectos (src/i18n/translations.js, es y en).

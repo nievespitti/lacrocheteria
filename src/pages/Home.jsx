@@ -15,7 +15,7 @@ export default function Home() {
 
   const galeriaPreview = [
     { id: 1, titulo: t('home.proyecto1'), categoria: t('categorias.Amigurumis'), placeholder: true },
-    { id: 2, titulo: t('home.proyecto2'), categoria: t('categorias.Ropa'), placeholder: true },
+    { id: 2, titulo: t('home.proyecto2'), categoria: t('categorias.Ropa'), imagen: '/galeria/ropa/ropa_04.png' },
     { id: 3, titulo: t('home.proyecto3'), categoria: t('categorias.Accesorios'), imagen: '/galeria/accesorios/bolso_002.png' },
     { id: 4, titulo: t('home.proyecto4'), categoria: t('categorias.Decoración'), placeholder: true },
   ]
