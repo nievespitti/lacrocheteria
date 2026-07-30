@@ -1,7 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { niveles } from '../data/niveles'
 import { useLanguage } from '../context/LanguageContext'
-import Seo from '../components/Seo'
+import Seo, { DOMINIO } from '../components/Seo'
 import './Leccion.css'
 
 export default function Leccion() {
@@ -20,9 +20,29 @@ export default function Leccion() {
   const parrafos = leccion.texto.split('\n\n')
   const descripcionSeo = parrafos[0].length > 155 ? `${parrafos[0].slice(0, 155)}…` : parrafos[0]
 
+  const jsonLdLeccion = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: leccion.titulo,
+    description: descripcionSeo,
+    image: leccion.imagen_url,
+    author: { '@type': 'Organization', name: 'La CrocheterIA' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'La CrocheterIA',
+      logo: { '@type': 'ImageObject', url: `${DOMINIO}/logo3d_final.png` },
+    },
+    mainEntityOfPage: `${DOMINIO}/aprender/${nivel.id}/${leccion.id}`,
+  }
+
   return (
     <div className="leccion-layout">
-      <Seo titulo={`${leccion.titulo} — La CrocheterIA`} descripcion={descripcionSeo} />
+      <Seo
+        titulo={`${leccion.titulo} — La CrocheterIA`}
+        descripcion={descripcionSeo}
+        imagen={leccion.imagen_url}
+        jsonLd={jsonLdLeccion}
+      />
       {/* SIDEBAR */}
       <aside className="leccion-sidebar">
         <Link to="/aprender" className="leccion-sidebar__back">

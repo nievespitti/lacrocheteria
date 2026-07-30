@@ -1,12 +1,29 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
-import Seo from '../components/Seo'
+import Seo, { DOMINIO } from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
 export default function Home() {
   const { t } = useLanguage()
+
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'La CrocheterIA',
+      url: DOMINIO,
+      logo: `${DOMINIO}/logo3d_final.png`,
+      description: t('seo.home.descripcion'),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'La CrocheterIA',
+      url: DOMINIO,
+    },
+  ]
 
   const servicios = [
     { icon: '✦', titulo: t('home.servicio1Titulo'), descripcion: t('home.servicio1Desc'), acento: 'terracota' },
@@ -23,7 +40,7 @@ export default function Home() {
 
   return (
     <>
-      <Seo titulo={t('seo.home.titulo')} descripcion={t('seo.home.descripcion')} />
+      <Seo titulo={t('seo.home.titulo')} descripcion={t('seo.home.descripcion')} jsonLd={jsonLd} />
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">
