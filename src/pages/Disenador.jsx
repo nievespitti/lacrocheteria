@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
+import Seo from '../components/Seo'
 import './Disenador.css'
 
 const CELL = 36
@@ -592,6 +593,7 @@ export default function Disenador() {
 
   return (
     <div className="disenador">
+      <Seo titulo={t('seo.disenador.titulo')} descripcion={t('seo.disenador.descripcion')} />
       <div className="disenador__header">
         <h1>{t('disenador.titulo')}</h1>
         <p>{t('disenador.subtitulo')}</p>

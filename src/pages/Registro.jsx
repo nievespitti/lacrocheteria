@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import Seo from '../components/Seo'
 import './Auth.css'
 
 export default function Registro() {
@@ -44,6 +45,7 @@ export default function Registro() {
   if (success) {
     return (
       <div className="auth-page">
+        <Seo titulo={t('seo.registro.titulo')} descripcion={t('seo.registro.descripcion')} noindex />
         <div className="auth-card">
           <div className="auth-card__header">
             <div className="auth-card__icon">✉️</div>
@@ -63,6 +65,7 @@ export default function Registro() {
 
   return (
     <div className="auth-page">
+      <Seo titulo={t('seo.registro.titulo')} descripcion={t('seo.registro.descripcion')} noindex />
       <div className="auth-card">
         <div className="auth-card__header">
           <div className="auth-card__icon">🧶</div>

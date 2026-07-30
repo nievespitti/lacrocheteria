@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Card from '../components/ui/Card'
 import Carousel from '../components/ui/Carousel'
+import Seo from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
 import { galeriaProyectos } from '../i18n/translations'
 import './Galeria.css'
@@ -74,6 +75,7 @@ export default function Galeria() {
 
   return (
     <div className="galeria-page">
+      <Seo titulo={t('seo.galeria.titulo')} descripcion={t('seo.galeria.descripcion')} />
       <div className="page-hero page-hero--sage">
         <div className="container">
           <h1>{t('galeria.heroTitulo')}</h1>

@@ -1,6 +1,7 @@
 import { useParams, Link, Navigate } from 'react-router-dom'
 import { niveles } from '../data/niveles'
 import { useLanguage } from '../context/LanguageContext'
+import Seo from '../components/Seo'
 import './Leccion.css'
 
 export default function Leccion() {
@@ -17,9 +18,11 @@ export default function Leccion() {
   const prevLeccion = nivel.lecciones[leccionIndex - 1] ?? null
   const nextLeccion = nivel.lecciones[leccionIndex + 1] ?? null
   const parrafos = leccion.texto.split('\n\n')
+  const descripcionSeo = parrafos[0].length > 155 ? `${parrafos[0].slice(0, 155)}…` : parrafos[0]
 
   return (
     <div className="leccion-layout">
+      <Seo titulo={`${leccion.titulo} — La CrocheterIA`} descripcion={descripcionSeo} />
       {/* SIDEBAR */}
       <aside className="leccion-sidebar">
         <Link to="/aprender" className="leccion-sidebar__back">

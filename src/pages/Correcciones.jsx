@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { listarCorrecciones, borrarCorreccion } from '../lib/correcciones'
 import { PatronResultado } from './AsistenteIA'
+import Seo from '../components/Seo'
 import './Correcciones.css'
 
 const EMAIL_ADMIN = 'nievesgarciapitti@gmail.com'
@@ -92,6 +93,7 @@ export default function Correcciones() {
 
   return (
     <div className="correcciones-page">
+      <Seo titulo={t('seo.correcciones.titulo')} descripcion={t('seo.correcciones.descripcion')} noindex />
       <div className="page-hero page-hero--terracota">
         <div className="container">
           <h1>{t('correcciones.heroTitulo')}</h1>

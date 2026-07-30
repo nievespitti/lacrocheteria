@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
+import Seo from '../components/Seo'
 import './Auth.css'
 
 export default function Login() {
@@ -37,6 +38,7 @@ export default function Login() {
 
   return (
     <div className="auth-page">
+      <Seo titulo={t('seo.login.titulo')} descripcion={t('seo.login.descripcion')} noindex />
       <div className="auth-card">
         <div className="auth-card__header">
           <div className="auth-card__icon">🧶</div>

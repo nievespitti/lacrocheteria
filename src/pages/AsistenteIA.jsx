@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
 import { supabase } from '../lib/supabase'
+import Seo from '../components/Seo'
 import './AsistenteIA.css'
 
 
@@ -210,6 +211,7 @@ export default function AsistenteIA() {
 
   return (
     <div className="asistente-page">
+      <Seo titulo={t('seo.asistente.titulo')} descripcion={t('seo.asistente.descripcion')} />
 
       <section className="asistente-hero">
         <div className="asistente-hero__inner">

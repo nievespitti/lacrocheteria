@@ -52,6 +52,19 @@ export const translations = {
     comun: {
       enProceso: '... en proceso',
     },
+    seo: {
+      home: { titulo: 'La CrocheterIA — Patrones de Crochet con Inteligencia Artificial', descripcion: 'Genera patrones de crochet únicos con IA a partir de una descripción o una foto, y aprende con rutas guiadas paso a paso. Tu rincón de ganchillo moderno.' },
+      galeria: { titulo: 'Galería de Creaciones — La CrocheterIA', descripcion: 'Explora amigurumis, ropa, accesorios y decoración tejidos a mano. Inspírate con nuestra colección de creaciones en crochet.' },
+      sobre: { titulo: 'Sobre Nosotras — La CrocheterIA', descripcion: 'La historia detrás de La CrocheterIA: crochet e inteligencia artificial al servicio de un oficio con siglos de tradición.' },
+      contacto: { titulo: 'Contacto — La CrocheterIA', descripcion: '¿Tienes una pregunta o una propuesta? Escríbenos y te responderemos lo antes posible.' },
+      disenador: { titulo: 'Diseñador de Patrones — La CrocheterIA', descripcion: 'Dibuja tus propios patrones de crochet punto a punto, expórtalos y calca sobre una foto de referencia.' },
+      aprender: { titulo: 'Aprende Crochet — La CrocheterIA', descripcion: 'Rutas de aprendizaje de crochet de principiante a experta, con tutoriales paso a paso y proyectos guiados.' },
+      asistente: { titulo: 'Asistente IA de Patrones — La CrocheterIA', descripcion: 'Describe tu proyecto o sube una foto de referencia y genera un patrón de crochet completo al instante con inteligencia artificial.' },
+      misProyectos: { titulo: 'Mis Proyectos — La CrocheterIA', descripcion: 'Tus patrones generados y diseños guardados, siempre a mano.' },
+      login: { titulo: 'Entrar — La CrocheterIA', descripcion: 'Inicia sesión para generar patrones y guardar tus proyectos.' },
+      registro: { titulo: 'Crear cuenta — La CrocheterIA', descripcion: 'Regístrate gratis para generar patrones de crochet con IA y guardar tus proyectos.' },
+      correcciones: { titulo: 'Correcciones — La CrocheterIA', descripcion: 'Panel interno de correcciones de patrones.' },
+    },
     categorias: {
       Amigurumis: 'Amigurumis',
       Ropa: 'Ropa',
@@ -366,6 +379,19 @@ export const translations = {
   en: {
     comun: {
       enProceso: '... in progress',
+    },
+    seo: {
+      home: { titulo: 'La CrocheterIA — Crochet Patterns Made with Artificial Intelligence', descripcion: 'Generate unique crochet patterns with AI from a description or a photo, and learn with step-by-step guided paths. Your modern crochet corner.' },
+      galeria: { titulo: 'Gallery of Creations — La CrocheterIA', descripcion: 'Explore amigurumis, clothing, accessories and home décor, all handmade. Get inspired by our crochet creations.' },
+      sobre: { titulo: 'About Us — La CrocheterIA', descripcion: 'The story behind La CrocheterIA: crochet and artificial intelligence in service of a centuries-old craft.' },
+      contacto: { titulo: 'Contact — La CrocheterIA', descripcion: 'Have a question or a proposal? Write to us and we will get back to you as soon as possible.' },
+      disenador: { titulo: 'Pattern Designer — La CrocheterIA', descripcion: 'Draw your own crochet patterns stitch by stitch, export them, and trace over a reference photo.' },
+      aprender: { titulo: 'Learn Crochet — La CrocheterIA', descripcion: 'Crochet learning paths from beginner to expert, with step-by-step tutorials and guided projects.' },
+      asistente: { titulo: 'AI Pattern Assistant — La CrocheterIA', descripcion: 'Describe your project or upload a reference photo and instantly generate a complete crochet pattern with artificial intelligence.' },
+      misProyectos: { titulo: 'My Projects — La CrocheterIA', descripcion: 'Your generated patterns and saved designs, always on hand.' },
+      login: { titulo: 'Log In — La CrocheterIA', descripcion: 'Log in to generate patterns and save your projects.' },
+      registro: { titulo: 'Create an Account — La CrocheterIA', descripcion: 'Sign up for free to generate crochet patterns with AI and save your projects.' },
+      correcciones: { titulo: 'Corrections — La CrocheterIA', descripcion: 'Internal pattern corrections panel.' },
     },
     categorias: {
       Amigurumis: 'Amigurumis',

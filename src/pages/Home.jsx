@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
+import Seo from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
 import './Home.css'
 
@@ -22,6 +23,7 @@ export default function Home() {
 
   return (
     <>
+      <Seo titulo={t('seo.home.titulo')} descripcion={t('seo.home.descripcion')} />
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">

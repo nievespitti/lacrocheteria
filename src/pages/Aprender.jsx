@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { niveles } from '../data/niveles'
 import { useLanguage } from '../context/LanguageContext'
+import Seo from '../components/Seo'
 import './Aprender.css'
 
 export default function Aprender() {
@@ -8,6 +9,7 @@ export default function Aprender() {
 
   return (
     <>
+      <Seo titulo={t('seo.aprender.titulo')} descripcion={t('seo.aprender.descripcion')} />
       <section className="page-hero page-hero--sage">
         <div className="container">
           <span className="aprender-hero__badge">{t('aprender.badge')}</span>

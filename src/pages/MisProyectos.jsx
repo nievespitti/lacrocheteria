@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { listarProyectos, borrarProyecto } from '../lib/proyectos'
 import { PatronResultado } from './AsistenteIA'
+import Seo from '../components/Seo'
 import './MisProyectos.css'
 
 function formatearFecha(iso, lang) {
@@ -123,6 +124,7 @@ export default function MisProyectos() {
 
   return (
     <div className="mis-proyectos-page">
+      <Seo titulo={t('seo.misProyectos.titulo')} descripcion={t('seo.misProyectos.descripcion')} noindex />
       <div className="page-hero page-hero--terracota">
         <div className="container">
           <h1>{t('misProyectos.heroTitulo')}</h1>

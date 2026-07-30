@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /login
+Disallow: /registro
+Disallow: /mis-proyectos
+Disallow: /admin/
+
+Sitemap: https://lacrocheteria.com/sitemap.xml

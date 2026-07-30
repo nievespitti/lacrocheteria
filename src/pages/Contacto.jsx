@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Button from '../components/ui/Button'
+import Seo from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
 import './Contacto.css'
 
@@ -40,6 +41,7 @@ export default function Contacto() {
 
   return (
     <div className="contacto-page">
+      <Seo titulo={t('seo.contacto.titulo')} descripcion={t('seo.contacto.descripcion')} />
       <div className="page-hero page-hero--terracota">
         <div className="container">
           <h1>{t('contacto.heroTitulo')}</h1>

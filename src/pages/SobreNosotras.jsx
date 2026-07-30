@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button'
+import Seo from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
 import './SobreNosotras.css'
 
@@ -15,6 +16,7 @@ export default function SobreNosotras() {
 
   return (
     <div className="sobre-page">
+      <Seo titulo={t('seo.sobre.titulo')} descripcion={t('seo.sobre.descripcion')} />
       <div className="page-hero page-hero--sage">
         <div className="container">
           <h1>{t('sobre.heroTitulo')}</h1>
