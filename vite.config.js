@@ -7,7 +7,17 @@ import { limiteExcedido, obtenerIP, origenValido } from './api/rateLimit.js'
 
 const MAX_PETICIONES_CHAT = 15
 const VENTANA_CHAT_MS = 10 * 60 * 1000
+const MAX_CARACTERES_MENSAJE = 4000
 const LIMITE_PATRONES_DIA = 15
+const MAX_DESCRIPCION = 2000
+const MAX_MATERIALES = 500
+const MAX_CORRECCION = 2000
+const MAX_PATRON_ANTERIOR = 20000
+const MAX_IMAGEN_BASE64 = 4_000_000 // ~3MB de imagen original
+
+function campoDemasiadoLargo(texto, max) {
+  return typeof texto === 'string' && texto.length > max
+}
 
 function parseImagenes(imagenes) {
   if (!Array.isArray(imagenes)) return []
@@ -107,6 +117,21 @@ export default defineConfig(({ mode }) => {
                 if (!descripcion && imageBlocks.length === 0) {
                   res.statusCode = 400
                   return res.end(JSON.stringify({ error: 'Falta la descripción o una foto de referencia' }))
+                }
+
+                if (
+                  campoDemasiadoLargo(descripcion, MAX_DESCRIPCION) ||
+                  campoDemasiadoLargo(materiales, MAX_MATERIALES) ||
+                  campoDemasiadoLargo(correccion, MAX_CORRECCION) ||
+                  campoDemasiadoLargo(patronAnterior, MAX_PATRON_ANTERIOR) ||
+                  imageBlocks.some((b) => b.source.data.length > MAX_IMAGEN_BASE64)
+                ) {
+                  res.statusCode = 400
+                  return res.end(JSON.stringify({
+                    error: idioma === 'en'
+                      ? 'One of the fields is too long, or a reference image is too large (max ~3MB).'
+                      : 'Alguno de los campos es demasiado largo, o una foto de referencia pesa demasiado (máx. ~3MB).',
+                  }))
                 }
 
                 // Reserva atómica (ver registrar_uso_patron en supabase/schema.sql).
@@ -321,6 +346,15 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
                 if (historial.length === 0) {
                   res.statusCode = 400
                   return res.end(JSON.stringify({ error: 'Conversación inválida' }))
+                }
+
+                if (historial.some((m) => m.content.length > MAX_CARACTERES_MENSAJE)) {
+                  res.statusCode = 400
+                  return res.end(JSON.stringify({
+                    error: idioma === 'en'
+                      ? 'One of the messages is too long.'
+                      : 'Uno de los mensajes es demasiado largo.',
+                  }))
                 }
 
                 const response = await fetch('https://api.anthropic.com/v1/messages', {

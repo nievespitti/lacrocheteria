@@ -3,6 +3,15 @@ import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion,
 import { origenValido } from './rateLimit.js'
 
 const LIMITE_PATRONES_DIA = 15
+const MAX_DESCRIPCION = 2000
+const MAX_MATERIALES = 500
+const MAX_CORRECCION = 2000
+const MAX_PATRON_ANTERIOR = 20000
+const MAX_IMAGEN_BASE64 = 4_000_000 // ~3MB de imagen original
+
+function campoDemasiadoLargo(texto, max) {
+  return typeof texto === 'string' && texto.length > max
+}
 
 function parseImagenes(imagenes) {
   if (!Array.isArray(imagenes)) return []
@@ -80,6 +89,20 @@ export default async function handler(req, res) {
 
   if (!descripcion && imageBlocks.length === 0) {
     return res.status(400).json({ error: 'Falta la descripción o una foto de referencia' })
+  }
+
+  if (
+    campoDemasiadoLargo(descripcion, MAX_DESCRIPCION) ||
+    campoDemasiadoLargo(materiales, MAX_MATERIALES) ||
+    campoDemasiadoLargo(correccion, MAX_CORRECCION) ||
+    campoDemasiadoLargo(patronAnterior, MAX_PATRON_ANTERIOR) ||
+    imageBlocks.some((b) => b.source.data.length > MAX_IMAGEN_BASE64)
+  ) {
+    return res.status(400).json({
+      error: idioma === 'en'
+        ? 'One of the fields is too long, or a reference image is too large (max ~3MB).'
+        : 'Alguno de los campos es demasiado largo, o una foto de referencia pesa demasiado (máx. ~3MB).',
+    })
   }
 
   // Reserva atómica (ver registrar_uso_patron en supabase/schema.sql): cuenta

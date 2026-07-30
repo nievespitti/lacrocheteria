@@ -2,6 +2,7 @@ import { systemPrompt } from './chatSystemPrompt.js'
 import { limiteExcedido, obtenerIP, origenValido } from './rateLimit.js'
 
 const MAX_MENSAJES = 20
+const MAX_CARACTERES_MENSAJE = 4000
 const MAX_PETICIONES_CHAT = 15
 const VENTANA_CHAT_MS = 10 * 60 * 1000
 
@@ -35,6 +36,14 @@ export default async function handler(req, res) {
 
   if (historial.length === 0) {
     return res.status(400).json({ error: 'Conversación inválida' })
+  }
+
+  if (historial.some((m) => m.content.length > MAX_CARACTERES_MENSAJE)) {
+    return res.status(400).json({
+      error: idioma === 'en'
+        ? 'One of the messages is too long.'
+        : 'Uno de los mensajes es demasiado largo.',
+    })
   }
 
   try {

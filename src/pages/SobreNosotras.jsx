@@ -34,7 +34,7 @@ export default function SobreNosotras() {
           </div>
           <div className="sobre-intro__image">
             <img
-              src="https://picsum.photos/seed/crafts-workshop/600/700"
+              src="/galeria/ropa/ropa_04.png"
               alt="Taller de crochet"
               className="sobre-foto"
             />
