@@ -91,10 +91,10 @@ grant select, insert, delete on public.correcciones_patrones to authenticated;
 -- USO DEL ASISTENTE IA — límite diario de generaciones
 -- ====================================================
 -- Cada llamada a /api/patron que llega a generar un patrón (o una
--- corrección) inserta una fila aquí. Antes de generar, el servidor cuenta
--- las filas de las últimas 24h para la usuaria y corta si supera el límite.
--- Sirve para acotar el coste de la API de Anthropic (Sonnet) si alguien
--- abusa o hay un bucle accidental en el cliente.
+-- corrección) reserva una fila aquí ANTES de llamar a Claude (ver función
+-- registrar_uso_patron más abajo), y la libera si la llamada a Anthropic
+-- falla. Sirve para acotar el coste de la API de Anthropic (Sonnet) si
+-- alguien abusa o hay un bucle accidental en el cliente.
 -- ====================================================
 
 create table if not exists public.uso_patron (
@@ -116,4 +116,59 @@ create policy "Ver mi propio uso"
   on public.uso_patron for select
   using (auth.uid() = user_id);
 
-grant select, insert on public.uso_patron to authenticated;
+create policy "Liberar mi uso reservado"
+  on public.uso_patron for delete
+  using (auth.uid() = user_id);
+
+grant select, insert, delete on public.uso_patron to authenticated;
+
+-- ====================================================
+-- registrar_uso_patron — reserva atómica del límite diario
+-- ====================================================
+-- api/patron.js hacía antes un SELECT del conteo de las últimas 24h y,
+-- solo tras generar el patrón, un INSERT no esperado (fire-and-forget).
+-- Como el INSERT llegaba después de la llamada a Claude, varias peticiones
+-- en paralelo del mismo usuario podían leer el mismo conteo antes de que
+-- ninguna insertase su fila, saltándose el límite de 15/día por completo
+-- (coste ilimitado del modelo caro). Esta función hace el conteo + reserva
+-- en una sola transacción, serializada por usuaria con un advisory lock,
+-- así que ninguna petición concurrente puede colarse. Devuelve el id de la
+-- fila reservada (usar para liberarla con un DELETE si Anthropic falla), o
+-- null si ya se alcanzó el límite.
+-- ====================================================
+
+create or replace function public.registrar_uso_patron(p_limite integer default 15)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := auth.uid();
+  v_count integer;
+  v_id uuid;
+begin
+  if v_user_id is null then
+    raise exception 'No autenticada';
+  end if;
+
+  -- Serializa las peticiones de la MISMA usuaria; usuarias distintas no se bloquean entre sí.
+  perform pg_advisory_xact_lock(hashtext(v_user_id::text));
+
+  select count(*) into v_count
+  from public.uso_patron
+  where user_id = v_user_id
+    and created_at >= now() - interval '24 hours';
+
+  if v_count >= p_limite then
+    return null;
+  end if;
+
+  insert into public.uso_patron (user_id) values (v_user_id)
+  returning id into v_id;
+
+  return v_id;
+end;
+$$;
+
+grant execute on function public.registrar_uso_patron(integer) to authenticated;

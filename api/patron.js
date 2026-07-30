@@ -71,26 +71,29 @@ export default async function handler(req, res) {
 
   const supabaseUsuario = clienteComoUsuario(token)
 
-  const desde = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-  const { count, error: errorConteoUso } = await supabaseUsuario
-    .from('uso_patron')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', usuario.id)
-    .gte('created_at', desde)
+  const imageBlocks = parseImagenes(imagenes)
 
-  if (errorConteoUso) console.error('No se pudo comprobar el límite de uso:', errorConteoUso)
-  if (!errorConteoUso && count >= LIMITE_PATRONES_DIA) {
+  if (!descripcion && imageBlocks.length === 0) {
+    return res.status(400).json({ error: 'Falta la descripción o una foto de referencia' })
+  }
+
+  // Reserva atómica (ver registrar_uso_patron en supabase/schema.sql): cuenta
+  // y hace el INSERT en la misma transacción serializada por usuaria, para
+  // que peticiones en paralelo no puedan saltarse el límite diario.
+  const { data: usoId, error: errorReserva } = await supabaseUsuario.rpc('registrar_uso_patron', {
+    p_limite: LIMITE_PATRONES_DIA,
+  })
+
+  if (errorReserva) {
+    console.error('No se pudo comprobar el límite de uso:', errorReserva)
+    return res.status(500).json({ error: 'No se pudo comprobar el límite de uso' })
+  }
+  if (!usoId) {
     return res.status(429).json({
       error: idioma === 'en'
         ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
         : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
     })
-  }
-
-  const imageBlocks = parseImagenes(imagenes)
-
-  if (!descripcion && imageBlocks.length === 0) {
-    return res.status(400).json({ error: 'Falta la descripción o una foto de referencia' })
   }
 
   const proyecto = descripcion || (idioma === 'en'
@@ -213,11 +216,6 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
       }
     }
 
-    supabaseUsuario
-      .from('uso_patron')
-      .insert({ user_id: usuario.id })
-      .then(({ error }) => { if (error) console.error('No se pudo registrar el uso:', error) })
-
     if (esCorreccion) {
       supabaseUsuario
         .from('correcciones_patrones')
@@ -237,6 +235,14 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 
     res.status(200).json({ patron: texto })
   } catch (err) {
+    // La generación falló: liberamos la reserva para no gastar un uso del
+    // límite diario en un intento que no llegó a entregar patrón.
+    supabaseUsuario
+      .from('uso_patron')
+      .delete()
+      .eq('id', usoId)
+      .then(({ error }) => { if (error) console.error('No se pudo liberar el uso reservado:', error) })
+
     console.error('Handler error:', err)
     res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' })
   }

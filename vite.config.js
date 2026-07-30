@@ -82,6 +82,8 @@ export default defineConfig(({ mode }) => {
             req.on('data', chunk => chunks.push(chunk))
             req.on('end', async () => {
               res.setHeader('Content-Type', 'application/json')
+              let supabaseUsuario = null
+              let usoId = null
               try {
                 const { usuario, token } = await getUsuarioAutenticado(req, env)
                 if (!usuario) {
@@ -93,30 +95,32 @@ export default defineConfig(({ mode }) => {
                   Buffer.concat(chunks).toString()
                 )
 
-                const supabaseUsuario = clienteComoUsuario(env, token)
-
-                const desde = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-                const { count, error: errorConteoUso } = await supabaseUsuario
-                  .from('uso_patron')
-                  .select('id', { count: 'exact', head: true })
-                  .eq('user_id', usuario.id)
-                  .gte('created_at', desde)
-
-                if (errorConteoUso) console.error('No se pudo comprobar el límite de uso:', errorConteoUso)
-                if (!errorConteoUso && count >= LIMITE_PATRONES_DIA) {
-                  res.statusCode = 429
-                  return res.end(JSON.stringify({
-                    error: idioma === 'en'
-                      ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
-                      : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
-                  }))
-                }
+                supabaseUsuario = clienteComoUsuario(env, token)
 
                 const imageBlocks = parseImagenes(imagenes)
 
                 if (!descripcion && imageBlocks.length === 0) {
                   res.statusCode = 400
                   return res.end(JSON.stringify({ error: 'Falta la descripción o una foto de referencia' }))
+                }
+
+                // Reserva atómica (ver registrar_uso_patron en supabase/schema.sql).
+                const { data: usoReservado, error: errorReserva } = await supabaseUsuario.rpc('registrar_uso_patron', {
+                  p_limite: LIMITE_PATRONES_DIA,
+                })
+                usoId = usoReservado
+
+                if (errorReserva) {
+                  res.statusCode = 500
+                  return res.end(JSON.stringify({ error: 'No se pudo comprobar el límite de uso' }))
+                }
+                if (!usoId) {
+                  res.statusCode = 429
+                  return res.end(JSON.stringify({
+                    error: idioma === 'en'
+                      ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
+                      : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
+                  }))
                 }
 
                 const proyecto = descripcion || (idioma === 'en'
@@ -234,11 +238,6 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
                   }
                 }
 
-                supabaseUsuario
-                  .from('uso_patron')
-                  .insert({ user_id: usuario.id })
-                  .then(({ error }) => { if (error) console.error('No se pudo registrar el uso:', error) })
-
                 if (esCorreccion) {
                   supabaseUsuario
                     .from('correcciones_patrones')
@@ -258,6 +257,15 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 
                 res.end(JSON.stringify({ patron: texto }))
               } catch (err) {
+                // La generación falló: liberamos la reserva para no gastar un uso
+                // del límite diario en un intento que no llegó a entregar patrón.
+                if (usoId) {
+                  supabaseUsuario
+                    .from('uso_patron')
+                    .delete()
+                    .eq('id', usoId)
+                    .then(({ error }) => { if (error) console.error('No se pudo liberar el uso reservado:', error) })
+                }
                 res.statusCode = err.status || 500
                 res.end(JSON.stringify({ error: err.message }))
               }
