@@ -1,5 +1,5 @@
 import { systemPrompt } from './chatSystemPrompt.js'
-import { limiteExcedido, obtenerIP } from './rateLimit.js'
+import { limiteExcedido, obtenerIP, origenValido } from './rateLimit.js'
 
 const MAX_MENSAJES = 20
 const MAX_PETICIONES_CHAT = 15
@@ -8,6 +8,10 @@ const VENTANA_CHAT_MS = 10 * 60 * 1000
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' })
+  }
+
+  if (!origenValido(req)) {
+    return res.status(403).json({ error: 'Origen no permitido' })
   }
 
   const { mensajes, idioma } = req.body

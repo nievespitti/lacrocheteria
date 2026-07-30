@@ -29,3 +29,18 @@ export function obtenerIP(req) {
   if (typeof forwarded === 'string' && forwarded.length > 0) return forwarded.split(',')[0].trim()
   return req.socket?.remoteAddress || 'desconocida'
 }
+
+// Comprueba que la petición venga del propio sitio (no de una web externa
+// intentando disparar peticiones de coste desde el navegador de un visitante).
+// Si el navegador no manda Origin ni Referer (algunos clientes legítimos no lo
+// hacen) se deja pasar: lo que bloquea es un origen que SÍ se identifica pero
+// no coincide con el dominio propio, no la ausencia de identificación.
+export function origenValido(req) {
+  const origen = req.headers.origin || req.headers.referer
+  if (!origen) return true
+  try {
+    return new URL(origen).host === req.headers.host
+  } catch {
+    return false
+  }
+}

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './crochetConocimiento.js'
+import { origenValido } from './rateLimit.js'
 
 const LIMITE_PATRONES_DIA = 15
 
@@ -60,6 +61,10 @@ async function llamarAnthropic(messages) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' })
+  }
+
+  if (!origenValido(req)) {
+    return res.status(403).json({ error: 'Origen no permitido' })
   }
 
   const { usuario, token } = await getUsuarioAutenticado(req)

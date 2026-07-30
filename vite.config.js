@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { createClient } from '@supabase/supabase-js'
 import { systemPrompt } from './api/chatSystemPrompt.js'
 import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './api/crochetConocimiento.js'
-import { limiteExcedido, obtenerIP } from './api/rateLimit.js'
+import { limiteExcedido, obtenerIP, origenValido } from './api/rateLimit.js'
 
 const MAX_PETICIONES_CHAT = 15
 const VENTANA_CHAT_MS = 10 * 60 * 1000
@@ -76,6 +76,11 @@ export default defineConfig(({ mode }) => {
             if (req.method !== 'POST') {
               res.statusCode = 405
               return res.end(JSON.stringify({ error: 'Método no permitido' }))
+            }
+
+            if (!origenValido(req)) {
+              res.statusCode = 403
+              return res.end(JSON.stringify({ error: 'Origen no permitido' }))
             }
 
             const chunks = []
@@ -280,6 +285,11 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
             if (req.method !== 'POST') {
               res.statusCode = 405
               return res.end(JSON.stringify({ error: 'Método no permitido' }))
+            }
+
+            if (!origenValido(req)) {
+              res.statusCode = 403
+              return res.end(JSON.stringify({ error: 'Origen no permitido' }))
             }
 
             const chunks = []
