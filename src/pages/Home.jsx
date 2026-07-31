@@ -14,7 +14,7 @@ export default function Home() {
       '@type': 'Organization',
       name: 'La CrocheterIA',
       url: DOMINIO,
-      logo: `${DOMINIO}/logo3d_final.png`,
+      logo: `${DOMINIO}/logo3d_final.jpg`,
       description: t('seo.home.descripcion'),
     },
     {
@@ -44,7 +44,7 @@ export default function Home() {
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">
-          <img src="/logo3d_final.png" alt="La CrocheterIA" className="hero__logo" />
+          <img src="/logo3d_final.jpg" alt="La CrocheterIA" className="hero__logo" width="960" height="627" />
           <span className="hero__badge">{t('home.heroBadge')}</span>
           <h1 className="hero__title">
             {t('home.heroTitleLine1')}<br />{t('home.heroTitleLine2')}

@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 
 export const DOMINIO = 'https://lacrocheteria.com'
-const IMAGEN_OG_DEFECTO = `${DOMINIO}/logo3d_final.png`
+const IMAGEN_OG_DEFECTO = `${DOMINIO}/logo3d_final.jpg`
 
 export default function Seo({ titulo, descripcion, noindex = false, imagen = IMAGEN_OG_DEFECTO, jsonLd }) {
   const { pathname } = useLocation()

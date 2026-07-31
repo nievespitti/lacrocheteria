@@ -30,7 +30,7 @@ export default function Leccion() {
     publisher: {
       '@type': 'Organization',
       name: 'La CrocheterIA',
-      logo: { '@type': 'ImageObject', url: `${DOMINIO}/logo3d_final.png` },
+      logo: { '@type': 'ImageObject', url: `${DOMINIO}/logo3d_final.jpg` },
     },
     mainEntityOfPage: `${DOMINIO}/aprender/${nivel.id}/${leccion.id}`,
   }

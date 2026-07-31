@@ -45,7 +45,7 @@ export default function Header() {
     <header className={`header${scrolled ? ' header--scrolled' : ''}`}>
       <div className="header__inner">
         <Link to="/" className="header__logo" onClick={closeMenu}>
-          <img src="/logo00.png" alt="La CrocheterIA" className="header__logo-img" />
+          <img src="/logo00.webp" alt="La CrocheterIA" className="header__logo-img" width="178" height="136" />
         </Link>
 
         <nav className={`header__nav${menuOpen ? ' header__nav--open' : ''}`}>
