@@ -94,6 +94,26 @@ async function generarSitemap() {
   console.log(`  sitemap.xml regenerado (${todasLasRutas.length} URLs)`)
 }
 
+// El Chromium que descarga `playwright install` necesita librerías del
+// sistema (libnss3, libnspr4, libgbm1...) que el contenedor de build de
+// Vercel no trae, y no hay apt-get ahí para instalarlas (`--with-deps` no
+// sirve): el binario existe pero al lanzarlo muere con exitCode=127.
+// `@sparticuz/chromium` es un Chromium autocontenido pensado para
+// entornos serverless/build como ese, así que en Vercel lanzamos
+// Playwright apuntando a su executablePath en vez de al Chromium
+// gestionado por Playwright. En local (Windows) seguimos usando el
+// Chromium instalado a mano (ver nota de CLAUDE.md).
+async function lanzarNavegador() {
+  if (!process.env.VERCEL) return chromium.launch()
+
+  const { default: chromiumServerless } = await import('@sparticuz/chromium')
+  return chromium.launch({
+    executablePath: await chromiumServerless.executablePath(),
+    args: chromiumServerless.args,
+    headless: true,
+  })
+}
+
 function esperarServidor(url, intentosRestantes = 30) {
   return new Promise((resolve, reject) => {
     fetch(url)
@@ -135,7 +155,7 @@ async function main() {
   try {
     await esperarServidor(`http://localhost:${PUERTO}/`)
 
-    const browser = await chromium.launch()
+    const browser = await lanzarNavegador()
     const context = await browser.newContext()
 
     for (const { ruta } of todasLasRutas) {
