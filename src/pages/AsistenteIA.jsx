@@ -586,6 +586,13 @@ export default function AsistenteIA() {
                   </div>
                 )}
               </div>
+
+              {/* Repetido al final: tras leer el patrón la usuaria está abajo del todo. */}
+              <div className="patron__final">
+                <button className="patron__btn patron__btn--new" onClick={() => { nueva(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
+                  {t('asistente.nuevoBtn')}
+                </button>
+              </div>
             </div>
           )}
 

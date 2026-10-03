@@ -423,6 +423,10 @@
   margin: 12px 0 0;
 }
 
+.patron__final {
+  margin-top: 24px;
+}
+
 .patron__feedback a.patron__btn {
   display: inline-block;
   text-decoration: none;
