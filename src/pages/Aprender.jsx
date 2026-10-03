@@ -58,7 +58,7 @@ export default function Aprender() {
         <div className="container cta-block">
           <h2>{t('aprender.ctaTitulo')}</h2>
           <p>{t('aprender.ctaTexto')}</p>
-          <Link to="/disenador" className="btn btn--ghost">{t('aprender.ctaBoton')}</Link>
+          <Link to="/asistente" className="btn btn--ghost">{t('aprender.ctaBoton')}</Link>
         </div>
       </section>
     </>
