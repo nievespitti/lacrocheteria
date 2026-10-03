@@ -41,8 +41,8 @@
   align-items: center;
   flex: 1;
   justify-content: space-evenly;
-  gap: 16px;
-  margin: 0 32px;
+  gap: 8px;
+  margin: 0 16px;
 }
 
 .header__link {
@@ -138,6 +138,9 @@
   color: var(--color-text-muted);
   white-space: nowrap;
   letter-spacing: 0.02em;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header__logout {
@@ -217,8 +220,11 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
+/* RESPONSIVE
+   Los círculos del menú tienen tamaño fijo: con sesión (Mis proyectos +
+   Correcciones + nombre) necesitan ~1.200 px. Por debajo de 1.240 px se usa
+   el menú hamburguesa para que nada se desborde en tablets y portátiles. */
+@media (max-width: 1240px) {
   .header__nav {
     display: none;
     position: absolute;
@@ -239,11 +245,6 @@
 
   .header__nav--open {
     display: flex;
-  }
-
-  .header__link {
-    width: 56px;
-    height: 56px;
   }
 
   .header__hamburger {
@@ -276,5 +277,18 @@
     padding: 13px 16px;
     border-radius: 10px;
     display: block;
+  }
+}
+
+/* Móvil: círculos más pequeños dentro del menú desplegado */
+@media (max-width: 768px) {
+  .header__link {
+    width: 64px;
+    height: 64px;
+    padding: 4px;
+  }
+
+  .header__link-label {
+    font-size: 0.56rem;
   }
 }

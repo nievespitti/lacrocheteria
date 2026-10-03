@@ -33,6 +33,10 @@ export default function Header() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // En la cabecera solo cabe el primer nombre; el completo va en el title.
+  const nombreCompleto = user ? (user.user_metadata?.nombre || user.email.split('@')[0]) : ''
+  const nombreCorto = nombreCompleto.trim().split(/\s+/)[0]
+
   const closeMenu = () => setMenuOpen(false)
 
   const handleSignOut = async () => {
@@ -81,8 +85,8 @@ export default function Header() {
           {!loading && (
             user ? (
               <div className="header__auth">
-                <span className="header__username">
-                  {user.user_metadata?.nombre || user.email.split('@')[0]}
+                <span className="header__username" title={nombreCompleto}>
+                  {nombreCorto}
                 </span>
                 <button onClick={handleSignOut} className="header__logout">
                   {t('header.salir')}
