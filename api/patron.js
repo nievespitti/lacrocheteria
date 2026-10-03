@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { reglasConstruccion, bloqueTecnicas, bloqueReferencia, promptCorreccion, verificarConteo, promptVerificacion } from './crochetConocimiento.js'
-import { origenValido } from './rateLimit.js'
+import { origenValido, obtenerIP } from './rateLimit.js'
+import { LIMITE_ANONIMO, anonIdValido, hashIP, reservarUsoAnonimo, liberarUsoAnonimo, registrarGeneracion, esErrorDeSaldo } from './usoAnonimo.js'
 
 const LIMITE_PATRONES_DIA = 15
 const MAX_DESCRIPCION = 2000
@@ -46,6 +47,11 @@ function clienteComoUsuario(token) {
   })
 }
 
+// Cliente sin sesión (rol anon) para visitantes sin cuenta.
+function clienteAnonimo() {
+  return createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY)
+}
+
 async function llamarAnthropic(messages) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -77,13 +83,16 @@ export default async function handler(req, res) {
   }
 
   const { usuario, token } = await getUsuarioAutenticado(req)
-  if (!usuario) {
-    return res.status(401).json({ error: 'Debes iniciar sesión para generar patrones' })
+  const { descripcion, nivel, materiales, idioma, imagenes, patronAnterior, correccion, anonId } = req.body
+  const esCorreccion = Boolean(patronAnterior && correccion)
+
+  // Sin sesión se permiten 2 generaciones por anon_id (límite en servidor, más
+  // abajo). Corregir un patrón sigue requiriendo cuenta.
+  if (!usuario && (!anonIdValido(anonId) || esCorreccion)) {
+    return res.status(401).json({ error: 'Debes iniciar sesión para generar patrones', codigo: 'login_requerido' })
   }
 
-  const { descripcion, nivel, materiales, idioma, imagenes, patronAnterior, correccion } = req.body
-
-  const supabaseUsuario = clienteComoUsuario(token)
+  const supabaseUsuario = usuario ? clienteComoUsuario(token) : clienteAnonimo()
 
   const imageBlocks = parseImagenes(imagenes)
 
@@ -105,23 +114,44 @@ export default async function handler(req, res) {
     })
   }
 
-  // Reserva atómica (ver registrar_uso_patron en supabase/schema.sql): cuenta
-  // y hace el INSERT en la misma transacción serializada por usuaria, para
-  // que peticiones en paralelo no puedan saltarse el límite diario.
-  const { data: usoId, error: errorReserva } = await supabaseUsuario.rpc('registrar_uso_patron', {
-    p_limite: LIMITE_PATRONES_DIA,
-  })
+  // Reserva atómica: con sesión, registrar_uso_patron (supabase/schema.sql);
+  // sin sesión, registrar_uso_anonimo (supabase/migracion_generaciones.sql).
+  // Ambas cuentan y hacen el INSERT en la misma transacción, para que
+  // peticiones en paralelo no puedan saltarse el límite.
+  let usoId = null
+  let restantes = null
 
-  if (errorReserva) {
-    console.error('No se pudo comprobar el límite de uso:', errorReserva)
-    return res.status(500).json({ error: 'No se pudo comprobar el límite de uso' })
-  }
-  if (!usoId) {
-    return res.status(429).json({
-      error: idioma === 'en'
-        ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
-        : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
+  if (usuario) {
+    const { data, error: errorReserva } = await supabaseUsuario.rpc('registrar_uso_patron', {
+      p_limite: LIMITE_PATRONES_DIA,
     })
+    if (errorReserva) {
+      console.error('No se pudo comprobar el límite de uso:', errorReserva)
+      return res.status(500).json({ error: 'No se pudo comprobar el límite de uso', codigo: 'error_generico' })
+    }
+    if (!data) {
+      return res.status(429).json({
+        error: idioma === 'en'
+          ? `You've reached the daily limit of ${LIMITE_PATRONES_DIA} patterns. Please try again tomorrow.`
+          : `Has alcanzado el límite diario de ${LIMITE_PATRONES_DIA} patrones. Vuelve a intentarlo mañana.`,
+        codigo: 'limite_diario',
+      })
+    }
+    usoId = data
+  } else {
+    const { reserva, error: errorReserva } = await reservarUsoAnonimo(supabaseUsuario, anonId, process.env)
+    if (errorReserva || !reserva) {
+      console.error('No se pudo comprobar el límite anónimo:', errorReserva)
+      return res.status(500).json({ error: 'No se pudo comprobar el límite de uso', codigo: 'error_generico' })
+    }
+    if (reserva.motivo) {
+      return res.status(429).json({
+        error: 'Límite de patrones gratis alcanzado',
+        codigo: reserva.motivo === 'tope_diario' ? 'tope_anonimo' : 'limite_anonimo',
+      })
+    }
+    usoId = reserva.id
+    restantes = Math.max(0, LIMITE_ANONIMO - reserva.usados)
   }
 
   const proyecto = descripcion || (idioma === 'en'
@@ -221,7 +251,6 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
 [2-3 consejos útiles adaptados al nivel ${nivel || 'Principiante'}]`
 
   const mensajeInicial = { role: 'user', content: imageBlocks.length > 0 ? [...imageBlocks, { type: 'text', text: prompt }] : prompt }
-  const esCorreccion = Boolean(patronAnterior && correccion)
   const messages = esCorreccion
     ? [mensajeInicial, { role: 'assistant', content: patronAnterior }, { role: 'user', content: promptCorreccion(correccion, idioma) }]
     : [mensajeInicial]
@@ -261,17 +290,36 @@ Responde SOLO con el patrón, con este formato exacto (sin introducción ni desp
         .then(({ error }) => { if (error) console.error('No se pudo registrar la corrección:', error) })
     }
 
-    res.status(200).json({ patron: texto })
+    const generacionId = await registrarGeneracion(supabaseUsuario, {
+      prompt: esCorreccion ? correccion : descripcion,
+      tipo: imageBlocks.length > 0 ? 'imagen' : 'texto',
+      userId: usuario?.id,
+      anonId,
+      ipHash: hashIP(obtenerIP(req), process.env),
+      esCorreccion,
+    })
+
+    res.status(200).json({ patron: texto, generacionId, restantes })
   } catch (err) {
     // La generación falló: liberamos la reserva para no gastar un uso del
-    // límite diario en un intento que no llegó a entregar patrón.
-    supabaseUsuario
-      .from('uso_patron')
-      .delete()
-      .eq('id', usoId)
-      .then(({ error }) => { if (error) console.error('No se pudo liberar el uso reservado:', error) })
+    // límite en un intento que no llegó a entregar patrón.
+    if (usuario) {
+      supabaseUsuario
+        .from('uso_patron')
+        .delete()
+        .eq('id', usoId)
+        .then(({ error }) => { if (error) console.error('No se pudo liberar el uso reservado:', error) })
+    } else {
+      liberarUsoAnonimo(supabaseUsuario, usoId)
+    }
 
     console.error('Handler error:', err)
-    res.status(err.status || 500).json({ error: err.message || 'Error interno del servidor' })
+
+    // Al usuario nunca le llega el error técnico de Anthropic.
+    if (esErrorDeSaldo(err)) {
+      console.error(`ANTHROPIC SIN SALDO / LÍMITE DE GASTO (HTTP ${err.status}): ${err.message}`)
+      return res.status(503).json({ error: 'El generador está descansando, vuelve mañana', codigo: 'generador_descansando' })
+    }
+    res.status(500).json({ error: 'Error interno del servidor', codigo: 'error_generico' })
   }
 }

@@ -1,11 +1,153 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
 import { supabase } from '../lib/supabase'
+import { obtenerAnonId } from '../lib/anonId'
 import Seo from '../components/Seo'
 import './AsistenteIA.css'
+
+// Códigos de error de /api/patron que bloquean el formulario e invitan a crear cuenta.
+const CODIGOS_BLOQUEO = ['limite_anonimo', 'tope_anonimo', 'login_requerido']
+
+// Mensaje a mostrar según el código de error (nunca el error técnico).
+function claveError(codigo, porDefecto) {
+  if (codigo === 'generador_descansando') return 'asistente.errorDescansando'
+  if (codigo === 'limite_diario') return 'asistente.errorLimiteDiario'
+  return porDefecto
+}
+
+// Llama a /api/patron con la sesión si la hay y, siempre, el identificador
+// anónimo (el servidor solo lo usa si no hay sesión).
+async function llamarApiPatron(body) {
+  const { data: { session } } = await supabase.auth.getSession()
+  const headers = { 'Content-Type': 'application/json' }
+  if (session) headers.Authorization = `Bearer ${session.access_token}`
+
+  const res = await fetch('/api/patron', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ ...body, anonId: obtenerAnonId() }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    const err = new Error(data.error || `HTTP ${res.status}`)
+    err.codigo = data.codigo
+    throw err
+  }
+  return data
+}
+
+function IconoPulgar({ abajo }) {
+  return (
+    <svg
+      className={`valoracion__icono${abajo ? ' valoracion__icono--abajo' : ''}`}
+      viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+    >
+      <path d="M7 10v12" />
+      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+    </svg>
+  )
+}
+
+// Pulgar arriba/abajo + comentario opcional. Guarda en la fila de
+// `generaciones` que creó el servidor, vía la función valorar_generacion.
+function ValoracionPatron({ generacionId }) {
+  const { t } = useLanguage()
+  const [valoracion, setValoracion] = useState(null)
+  const [comentario, setComentario] = useState('')
+  const [comentarioEnviado, setComentarioEnviado] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState(false)
+
+  async function guardarValoracion(nuevaValoracion, texto) {
+    setEnviando(true)
+    setError(false)
+    const { error: rpcError } = await supabase.rpc('valorar_generacion', {
+      p_id: generacionId,
+      p_valoracion: nuevaValoracion,
+      p_comentario: texto || null,
+    })
+    setEnviando(false)
+    if (rpcError) {
+      console.error('Error al valorar el patrón:', rpcError)
+      setError(true)
+      return false
+    }
+    return true
+  }
+
+  async function votar(nuevaValoracion) {
+    const anterior = valoracion
+    setValoracion(nuevaValoracion)
+    setComentarioEnviado(false)
+    if (!(await guardarValoracion(nuevaValoracion, comentario.trim()))) setValoracion(anterior)
+  }
+
+  async function enviarComentario() {
+    if (await guardarValoracion(valoracion, comentario.trim())) setComentarioEnviado(true)
+  }
+
+  return (
+    <div className="valoracion">
+      <p className="valoracion__pregunta">{t('asistente.valoracionPregunta')}</p>
+      <div className="valoracion__botones">
+        <button
+          type="button"
+          className={`valoracion__btn${valoracion === 'positiva' ? ' valoracion__btn--activo' : ''}`}
+          aria-pressed={valoracion === 'positiva'}
+          onClick={() => votar('positiva')}
+          disabled={enviando}
+        >
+          <IconoPulgar /> {t('asistente.valoracionSi')}
+        </button>
+        <button
+          type="button"
+          className={`valoracion__btn${valoracion === 'negativa' ? ' valoracion__btn--activo' : ''}`}
+          aria-pressed={valoracion === 'negativa'}
+          onClick={() => votar('negativa')}
+          disabled={enviando}
+        >
+          <IconoPulgar abajo /> {t('asistente.valoracionNo')}
+        </button>
+      </div>
+
+      {valoracion && !comentarioEnviado && (
+        <div className="form-field valoracion__comentario">
+          <label className="form-label" htmlFor="valoracion-comentario">
+            {t('asistente.valoracionComentarioLabel')} <span className="form-label__opt">{t('asistente.materialesOpcional')}</span>
+          </label>
+          <textarea
+            id="valoracion-comentario"
+            className="form-textarea form-textarea--sm"
+            placeholder={t('asistente.valoracionComentarioPlaceholder')}
+            value={comentario}
+            onChange={e => setComentario(e.target.value)}
+            maxLength={1000}
+            rows={2}
+          />
+          <button
+            type="button"
+            className="patron__btn patron__btn--new"
+            onClick={enviarComentario}
+            disabled={!comentario.trim() || enviando}
+          >
+            {t('asistente.valoracionEnviarComentario')}
+          </button>
+        </div>
+      )}
+
+      {valoracion && (
+        <p className="valoracion__gracias">
+          {comentarioEnviado ? t('asistente.valoracionComentarioGracias') : t('asistente.valoracionGracias')}
+        </p>
+      )}
+      {error && <p className="form-error">{t('asistente.valoracionError')}</p>}
+    </div>
+  )
+}
 
 
 function LineaPatron({ linea }) {
@@ -47,8 +189,10 @@ const MAX_FOTOS = 3
 export default function AsistenteIA() {
   const { user } = useAuth()
   const { t, lang } = useLanguage()
+  const location = useLocation()
   const niveles = t('asistente.niveles')
-  const [descripcion, setDescripcion] = useState('')
+  // Texto que llega precargado desde el generador de la Home.
+  const [descripcion, setDescripcion] = useState(location.state?.descripcion || '')
   const [nivelIndex, setNivelIndex] = useState(0)
   const [materiales, setMateriales] = useState('')
   const [imagenes, setImagenes] = useState([])
@@ -62,9 +206,15 @@ export default function AsistenteIA() {
   const [mostrarCorreccion, setMostrarCorreccion] = useState(false)
   const [correccion, setCorreccion] = useState('')
   const [corrigiendo, setCorrigiendo] = useState(false)
-  const [errorCorregir, setErrorCorregir] = useState(false)
+  const [errorCorregir, setErrorCorregir] = useState('') // '' o código de error
+  const [errorCodigo, setErrorCodigo] = useState('')
+  const [generacionId, setGeneracionId] = useState(null)
+  const [restantes, setRestantes] = useState(null) // generaciones gratis que le quedan sin cuenta
+  const [bloqueo, setBloqueo] = useState(null) // uno de CODIGOS_BLOQUEO
   const fotoInputRef = useRef(null)
   const nivel = niveles[nivelIndex]
+  // Al iniciar sesión desaparece el bloqueo de visitante.
+  const bloqueoActivo = !user && bloqueo
 
   function cargarImagen(e) {
     const file = e.target.files[0]
@@ -93,31 +243,25 @@ export default function AsistenteIA() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!user || (!descripcion.trim() && imagenes.length === 0)) return
+    if (!descripcion.trim() && imagenes.length === 0) return
     setEstado('generando')
     setPatron('')
+    setErrorCodigo('')
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Sesión no válida. Vuelve a iniciar sesión.')
-
-      const res = await fetch('/api/patron', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagenes }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-
+      const data = await llamarApiPatron({ descripcion, nivel, materiales, idioma: lang, imagenes })
       setPatron(data.patron)
+      setGeneracionId(data.generacionId || null)
+      if (typeof data.restantes === 'number') setRestantes(data.restantes)
       setEstado('ok')
     } catch (err) {
       console.error('Error asistente:', err)
+      if (CODIGOS_BLOQUEO.includes(err.codigo)) {
+        setBloqueo(err.codigo)
+        setEstado('idle')
+        return
+      }
+      setErrorCodigo(err.codigo || '')
       setEstado('error')
     }
   }
@@ -125,32 +269,18 @@ export default function AsistenteIA() {
   async function corregir() {
     if (!correccion.trim() || corrigiendo) return
     setCorrigiendo(true)
-    setErrorCorregir(false)
+    setErrorCorregir('')
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('Sesión no válida. Vuelve a iniciar sesión.')
-
-      const res = await fetch('/api/patron', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ descripcion, nivel, materiales, idioma: lang, imagenes, patronAnterior: patron, correccion }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`)
-
+      const data = await llamarApiPatron({ descripcion, nivel, materiales, idioma: lang, imagenes, patronAnterior: patron, correccion })
       setPatron(data.patron)
+      setGeneracionId(data.generacionId || null)
       setMostrarCorreccion(false)
       setCorreccion('')
       setGuardado(false)
     } catch (err) {
       console.error('Error al corregir patrón:', err)
-      setErrorCorregir(true)
+      setErrorCorregir(err.codigo || 'error')
     } finally {
       setCorrigiendo(false)
     }
@@ -184,7 +314,11 @@ export default function AsistenteIA() {
     setGuardado(false)
     setMostrarCorreccion(false)
     setCorreccion('')
-    setErrorCorregir(false)
+    setErrorCorregir('')
+    setErrorCodigo('')
+    setGeneracionId(null)
+    // Sin cuenta y sin generaciones gratis: directamente la invitación a registrarse.
+    if (!user && restantes === 0) setBloqueo('limite_anonimo')
   }
 
   async function guardar() {
@@ -231,16 +365,34 @@ export default function AsistenteIA() {
             <p>{t('asistente.avisoAprendizaje')}</p>
           </div>
 
-          {!user && (
+          {bloqueoActivo && (
             <div className="asistente-login-required">
               <span className="asistente-login-required__icon">◈</span>
-              <h2>{t('asistente.loginRequeridoTitulo')}</h2>
-              <p>{t('asistente.loginRequeridoTexto')}</p>
-              <Link to="/login" className="form-submit">{t('asistente.iniciarSesionBtn')}</Link>
+              <h2>
+                {bloqueo === 'limite_anonimo' ? t('asistente.limiteAnonimoTitulo')
+                  : bloqueo === 'tope_anonimo' ? t('asistente.topeAnonimoTitulo')
+                  : t('asistente.loginRequeridoTitulo')}
+              </h2>
+              <p>
+                {bloqueo === 'limite_anonimo' ? t('asistente.limiteAnonimoTexto')
+                  : bloqueo === 'tope_anonimo' ? t('asistente.topeAnonimoTexto')
+                  : t('asistente.loginRequeridoTexto')}
+              </p>
+              <div className="asistente-login-required__acciones">
+                <Link to="/registro" className="form-submit">{t('asistente.crearCuentaBtn')}</Link>
+                <Link to="/login" className="asistente-login-required__link">{t('asistente.iniciarSesionBtn')}</Link>
+              </div>
             </div>
           )}
 
-          {user && estado !== 'ok' && (
+          {!user && !bloqueoActivo && estado !== 'ok' && (
+            <p className="asistente-gratis">
+              <span className="asistente-gratis__icon">✦</span>
+              {restantes === 1 ? t('asistente.quedaUnoGratis') : t('asistente.avisoGratis')}
+            </p>
+          )}
+
+          {!bloqueoActivo && estado !== 'ok' && (
             <form className="asistente-form" onSubmit={handleSubmit}>
               <div className="form-field">
                 <label className="form-label" htmlFor="descripcion">
@@ -323,7 +475,7 @@ export default function AsistenteIA() {
 
               {estado === 'error' && (
                 <p className="form-error">
-                  {t('asistente.errorGenerico')}
+                  {t(claveError(errorCodigo, 'asistente.errorGenerico'))}
                 </p>
               )}
 
@@ -377,8 +529,22 @@ export default function AsistenteIA() {
               )}
               <PatronResultado texto={patron} />
 
+              {!user && restantes !== null && (
+                <p className="asistente-gratis asistente-gratis--resultado">
+                  <span className="asistente-gratis__icon">✦</span>
+                  {restantes === 1 ? t('asistente.quedaUnoGratis') : t('asistente.sinGratisRestantes')}{' '}
+                  {restantes === 0 && <Link to="/registro">{t('asistente.crearCuentaBtn')}</Link>}
+                </p>
+              )}
+
               <div className="patron__feedback">
-                {!mostrarCorreccion ? (
+                {generacionId && <ValoracionPatron key={generacionId} generacionId={generacionId} />}
+
+                {!user ? (
+                  <Link to="/registro" className="patron__btn patron__btn--corregir">
+                    {t('asistente.corregirRequiereCuenta')}
+                  </Link>
+                ) : !mostrarCorreccion ? (
                   <button
                     type="button"
                     className="patron__btn patron__btn--corregir"
@@ -400,7 +566,7 @@ export default function AsistenteIA() {
                       rows={3}
                     />
                     {errorCorregir && (
-                      <p className="form-error">{t('asistente.errorCorregir')}</p>
+                      <p className="form-error">{t(claveError(errorCorregir, 'asistente.errorCorregir'))}</p>
                     )}
                     <button
                       type="button"
@@ -419,6 +585,13 @@ export default function AsistenteIA() {
                     </button>
                   </div>
                 )}
+              </div>
+
+              {/* Repetido al final: tras leer el patrón la usuaria está abajo del todo. */}
+              <div className="patron__final">
+                <button className="patron__btn patron__btn--new" onClick={() => { nueva(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
+                  {t('asistente.nuevoBtn')}
+                </button>
               </div>
             </div>
           )}

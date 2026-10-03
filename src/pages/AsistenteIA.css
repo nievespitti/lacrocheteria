@@ -316,6 +316,122 @@
   text-decoration: none;
 }
 
+.asistente-login-required__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.asistente-login-required__link {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* ── Aviso de prueba gratis (sin cuenta) ── */
+.asistente-gratis {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 0.85rem;
+  color: var(--color-sage);
+  margin: 0 0 28px;
+}
+
+.asistente-gratis__icon {
+  color: var(--color-accent);
+}
+
+.asistente-gratis a {
+  color: var(--color-accent);
+}
+
+.asistente-gratis--resultado {
+  margin: 32px 0 0;
+}
+
+/* ── Valoración del patrón ── */
+.valoracion {
+  margin-bottom: 28px;
+}
+
+.valoracion__pregunta {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  margin: 0 0 14px;
+  color: var(--color-text);
+}
+
+.valoracion__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.valoracion__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: transparent;
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.valoracion__btn:hover:not(:disabled) {
+  border-color: var(--color-sage);
+  color: var(--color-sage);
+}
+
+.valoracion__btn--activo,
+.valoracion__btn--activo:hover:not(:disabled) {
+  background: var(--color-sage);
+  border-color: var(--color-sage);
+  color: #fff;
+}
+
+.valoracion__btn:disabled {
+  cursor: wait;
+}
+
+.valoracion__icono--abajo {
+  transform: rotate(180deg);
+}
+
+.valoracion__comentario {
+  margin-top: 18px;
+}
+
+.valoracion__comentario .patron__btn {
+  align-self: flex-start;
+}
+
+.valoracion__gracias {
+  font-size: 0.85rem;
+  color: var(--color-sage);
+  margin: 12px 0 0;
+}
+
+.patron__final {
+  margin-top: 24px;
+}
+
+.patron__feedback a.patron__btn {
+  display: inline-block;
+  text-decoration: none;
+}
+
 /* ── Patrón resultado ── */
 .patron {
   background: #fff;
