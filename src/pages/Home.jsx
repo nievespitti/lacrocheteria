@@ -1,12 +1,67 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Seo, { DOMINIO } from '../components/Seo'
 import { useLanguage } from '../context/LanguageContext'
+import { galeriaProyectos } from '../i18n/translations'
 import './Home.css'
 
-export default function Home() {
+// Acceso directo al Asistente (/asistente): no genera aquí, solo lleva el
+// texto precargado al formulario del Asistente, que es quien genera.
+function GeneradorRapido() {
   const { t } = useLanguage()
+  const navigate = useNavigate()
+  const [descripcion, setDescripcion] = useState('')
+
+  function enviar(e) {
+    e.preventDefault()
+    if (!descripcion.trim()) return
+    navigate('/asistente', { state: { descripcion: descripcion.trim() } })
+  }
+
+  return (
+    <section className="generador-rapido">
+      <div className="container generador-rapido__inner">
+        <span className="generador-rapido__eyebrow">{t('home.generadorEyebrow')}</span>
+        <h2 className="generador-rapido__titulo">{t('home.generadorTitulo')}</h2>
+        <form className="generador-rapido__form" onSubmit={enviar}>
+          <textarea
+            className="generador-rapido__campo"
+            placeholder={t('home.generadorPlaceholder')}
+            aria-label={t('home.generadorPlaceholder')}
+            value={descripcion}
+            onChange={e => setDescripcion(e.target.value)}
+            maxLength={2000}
+            rows={3}
+          />
+          <div className="generador-rapido__ejemplos">
+            <span className="generador-rapido__ejemplos-label">{t('home.generadorEjemplosLabel')}</span>
+            {t('home.generadorEjemplos').map(ejemplo => (
+              <button
+                key={ejemplo.label}
+                type="button"
+                className="generador-rapido__ejemplo"
+                onClick={() => setDescripcion(ejemplo.texto)}
+              >
+                {ejemplo.label}
+              </button>
+            ))}
+          </div>
+          <div className="generador-rapido__acciones">
+            <button type="submit" className="generador-rapido__btn" disabled={!descripcion.trim()}>
+              {t('home.generadorBtn')}
+            </button>
+            <span className="generador-rapido__nota">{t('home.generadorNota')}</span>
+          </div>
+        </form>
+      </div>
+    </section>
+  )
+}
+
+export default function Home() {
+  const { t, lang } = useLanguage()
 
   const jsonLd = [
     {
@@ -31,16 +86,20 @@ export default function Home() {
     { icon: '❋', titulo: t('home.servicio3Titulo'), descripcion: t('home.servicio3Desc'), acento: 'linen' },
   ]
 
+  // Solo piezas con foto real (los títulos salen de galeriaProyectos, igual que en /galeria).
   const galeriaPreview = [
-    { id: 1, titulo: t('home.proyecto1'), categoria: t('categorias.Amigurumis'), placeholder: true },
-    { id: 2, titulo: t('home.proyecto2'), categoria: t('categorias.Ropa'), imagen: '/galeria/ropa/ropa_04.png' },
-    { id: 3, titulo: t('home.proyecto3'), categoria: t('categorias.Accesorios'), imagen: '/galeria/accesorios/bolso_002.png' },
-    { id: 4, titulo: t('home.proyecto4'), categoria: t('categorias.Decoración'), placeholder: true },
-  ]
+    { id: 'ropa-004', categoria: t('categorias.Ropa'), imagen: '/galeria/ropa/ropa_04.png' },
+    { id: 'bolso-002', categoria: t('categorias.Accesorios'), imagen: '/galeria/accesorios/bolso_002.png' },
+    { id: 'ropa-001', categoria: t('categorias.Ropa'), imagen: '/galeria/ropa/ropa_01.png' },
+    { id: 'bolso-005', categoria: t('categorias.Accesorios'), imagen: '/galeria/accesorios/bolso_005.png' },
+  ].map(p => ({ ...p, titulo: (galeriaProyectos[lang][p.id] || galeriaProyectos.es[p.id]).titulo }))
 
   return (
     <>
       <Seo titulo={t('seo.home.titulo')} descripcion={t('seo.home.descripcion')} jsonLd={jsonLd} />
+      {/* GENERADOR (lo primero que ve el visitante) */}
+      <GeneradorRapido />
+
       {/* HERO */}
       <section className="hero">
         <div className="container hero__inner">
@@ -92,8 +151,6 @@ export default function Home() {
                 image={p.imagen}
                 title={p.titulo}
                 badge={p.categoria}
-                placeholder={p.placeholder}
-                placeholderText={t('comun.enProceso')}
               />
             ))}
           </div>

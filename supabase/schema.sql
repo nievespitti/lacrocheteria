@@ -8,6 +8,9 @@
 -- 1. Entra en tu proyecto de Supabase (https://supabase.com/dashboard)
 -- 2. Ve a "SQL Editor" en el menú lateral
 -- 3. Pega todo este archivo y pulsa "Run"
+--
+-- Uso sin cuenta (uso_anonimo) y valoración de patrones (generaciones):
+-- ver supabase/migracion_generaciones.sql (se aplica aparte).
 -- ====================================================
 
 create table if not exists public.proyectos_guardados (
