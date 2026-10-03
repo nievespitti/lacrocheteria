@@ -6,12 +6,10 @@ import { useLanguage } from '../context/LanguageContext'
 import { galeriaProyectos } from '../i18n/translations'
 import './Galeria.css'
 
+// Solo categorías con fotos reales (sin tarjetas "en proceso"). Para recuperar
+// Amigurumis o Decoración cuando haya fotos: añade aquí la categoría con sus
+// imágenes; los textos ya existen en galeriaProyectos y en categorias.
 const proyectosPorCategoria = {
-  Amigurumis: [
-    { id: 1, placeholder: true },
-    { id: 5, placeholder: true },
-    { id: 9, placeholder: true },
-  ],
   // Para añadir una prenda nueva: 1) pon la foto en public/galeria/ropa/ropa_0N.png,
   // 2) añade una línea aquí, 3) añade el título/descripción en galeriaProyectos (src/i18n/translations.js, es y en).
   Ropa: [
@@ -35,11 +33,6 @@ const proyectosPorCategoria = {
     { id: 'bolso-007', imagen: '/galeria/accesorios/bolso_007.png' },
     { id: 'bolso-008', imagen: '/galeria/accesorios/bolso_008.png' },
   ],
-  Decoración: [
-    { id: 4, placeholder: true },
-    { id: 8, placeholder: true },
-    { id: 12, placeholder: true },
-  ],
 }
 
 function CarruselCategoria({ categoria, categoriaLabel }) {
@@ -58,8 +51,6 @@ function CarruselCategoria({ categoria, categoriaLabel }) {
               title={texto.titulo}
               badge={categoriaLabel}
               description={texto.descripcion}
-              placeholder={p.placeholder}
-              placeholderText={t('comun.enProceso')}
             />
           )
         })}
