@@ -68,7 +68,7 @@ export default function Registro() {
       <Seo titulo={t('seo.registro.titulo')} descripcion={t('seo.registro.descripcion')} noindex />
       <div className="auth-card">
         <div className="auth-card__header">
-          <div className="auth-card__icon">🧶</div>
+          <div className="auth-card__icon">❋</div>
           <h1 className="auth-card__title">{t('auth.registroTitulo')}</h1>
           <p className="auth-card__subtitle">{t('auth.registroSubtitulo')}</p>
         </div>

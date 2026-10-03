@@ -41,7 +41,7 @@ export default function Login() {
       <Seo titulo={t('seo.login.titulo')} descripcion={t('seo.login.descripcion')} noindex />
       <div className="auth-card">
         <div className="auth-card__header">
-          <div className="auth-card__icon">🧶</div>
+          <div className="auth-card__icon">❋</div>
           <h1 className="auth-card__title">{t('auth.loginTitulo')}</h1>
           <p className="auth-card__subtitle">{t('auth.loginSubtitulo')}</p>
         </div>

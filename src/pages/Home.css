@@ -24,6 +24,14 @@
   font-weight: 400;
   line-height: 1.1;
   color: #fff;
+  margin: 0 0 10px;
+  text-wrap: balance;
+}
+
+.generador-rapido__pregunta {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0 0 28px;
 }
 
@@ -120,6 +128,22 @@
 .generador-rapido__nota {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.generador-rapido__alternativa {
+  margin: 28px 0 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.generador-rapido__alternativa a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.generador-rapido__alternativa a:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* === HERO === */
@@ -228,6 +252,22 @@
   font-size: 0.93rem;
   line-height: 1.65;
   margin: 0;
+}
+
+/* Las tarjetas son enlaces: sin subrayado ni color de enlace */
+a.servicio-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.servicio-card__ver {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
 }
 
 .servicio-card--terracota { border-top-color: var(--color-accent); }

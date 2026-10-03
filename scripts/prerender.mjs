@@ -43,7 +43,7 @@ import { niveles } from '../src/data/niveles.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const RAIZ = path.join(__dirname, '..')
 const DIST = path.join(RAIZ, 'dist')
-const DOMINIO = 'https://lacrocheteria.com'
+const DOMINIO = 'https://www.lacrocheteria.com' // mismo que src/components/Seo.jsx
 const PUERTO = 4550
 
 const SELECTORES_SEO = [
@@ -58,10 +58,10 @@ const SELECTORES_SEO = [
 
 const rutasEstaticas = [
   { ruta: '/', changefreq: 'weekly', priority: '1.0' },
-  { ruta: '/galeria', changefreq: 'weekly', priority: '0.9' },
-  { ruta: '/asistente', changefreq: 'monthly', priority: '0.8' },
+  { ruta: '/asistente', changefreq: 'weekly', priority: '0.9' },
+  { ruta: '/galeria', changefreq: 'weekly', priority: '0.8' },
   { ruta: '/aprender', changefreq: 'monthly', priority: '0.8' },
-  { ruta: '/disenador', changefreq: 'monthly', priority: '0.6' },
+  { ruta: '/disenador', changefreq: 'monthly', priority: '0.8' },
   { ruta: '/sobre-nosotras', changefreq: 'monthly', priority: '0.5' },
   { ruta: '/contacto', changefreq: 'monthly', priority: '0.5' },
 ]

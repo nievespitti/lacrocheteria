@@ -23,6 +23,7 @@
 
 .auth-card__icon {
   font-size: 2.5rem;
+  color: var(--color-accent);
   margin-bottom: 12px;
 }
 

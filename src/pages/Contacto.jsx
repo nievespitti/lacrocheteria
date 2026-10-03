@@ -57,7 +57,7 @@ export default function Contacto() {
             <p>{t('contacto.intro')}</p>
 
             <div className="contacto-dato">
-              <span className="contacto-dato__icon">✉️</span>
+              <span className="contacto-dato__icon">◈</span>
               <div>
                 <strong>{t('contacto.emailLabel')}</strong>
                 <a href="mailto:info@lacrocheteria.com">info@lacrocheteria.com</a>
@@ -65,7 +65,7 @@ export default function Contacto() {
             </div>
 
             <div className="contacto-dato">
-              <span className="contacto-dato__icon">🕐</span>
+              <span className="contacto-dato__icon">✦</span>
               <div>
                 <strong>{t('contacto.tiempoLabel')}</strong>
                 <span>{t('contacto.tiempoValor')}</span>
@@ -73,7 +73,7 @@ export default function Contacto() {
             </div>
 
             <div className="contacto-dato">
-              <span className="contacto-dato__icon">🌍</span>
+              <span className="contacto-dato__icon">❋</span>
               <div>
                 <strong>{t('contacto.idiomaLabel')}</strong>
                 <span>{t('contacto.idiomaValor')}</span>
@@ -85,7 +85,7 @@ export default function Contacto() {
           <form className="contacto-form" onSubmit={handleSubmit} noValidate>
             {estado === 'ok' ? (
               <div className="form-success">
-                <span className="form-success__emoji">🎉</span>
+                <span className="form-success__emoji">✦</span>
                 <h3>{t('contacto.exitoTitulo')}</h3>
                 <p>{t('contacto.exitoTexto')}</p>
                 <Button type="button" variant="secondary" onClick={() => setEstado('idle')}>

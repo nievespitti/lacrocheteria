@@ -24,7 +24,9 @@ function GeneradorRapido() {
     <section className="generador-rapido">
       <div className="container generador-rapido__inner">
         <span className="generador-rapido__eyebrow">{t('home.generadorEyebrow')}</span>
-        <h2 className="generador-rapido__titulo">{t('home.generadorTitulo')}</h2>
+        {/* Único h1 de la Home, con palabra clave ("patrones de crochet") para SEO. */}
+        <h1 className="generador-rapido__titulo">{t('home.generadorTitulo')}</h1>
+        <p className="generador-rapido__pregunta">{t('home.generadorPregunta')}</p>
         <form className="generador-rapido__form" onSubmit={enviar}>
           <textarea
             className="generador-rapido__campo"
@@ -55,6 +57,9 @@ function GeneradorRapido() {
             <span className="generador-rapido__nota">{t('home.generadorNota')}</span>
           </div>
         </form>
+        <p className="generador-rapido__alternativa">
+          <Link to="/disenador">{t('home.disenadorLink')}</Link>
+        </p>
       </div>
     </section>
   )
@@ -81,9 +86,9 @@ export default function Home() {
   ]
 
   const servicios = [
-    { icon: '✦', titulo: t('home.servicio1Titulo'), descripcion: t('home.servicio1Desc'), acento: 'terracota' },
-    { icon: '◈', titulo: t('home.servicio2Titulo'), descripcion: t('home.servicio2Desc'), acento: 'sage' },
-    { icon: '❋', titulo: t('home.servicio3Titulo'), descripcion: t('home.servicio3Desc'), acento: 'linen' },
+    { icon: '✦', titulo: t('home.servicio1Titulo'), descripcion: t('home.servicio1Desc'), acento: 'terracota', to: '/asistente' },
+    { icon: '◈', titulo: t('home.servicio2Titulo'), descripcion: t('home.servicio2Desc'), acento: 'sage', to: '/disenador' },
+    { icon: '❋', titulo: t('home.servicio3Titulo'), descripcion: t('home.servicio3Desc'), acento: 'linen', to: '/aprender' },
   ]
 
   // Solo piezas con foto real (los títulos salen de galeriaProyectos, igual que en /galeria).
@@ -105,9 +110,9 @@ export default function Home() {
         <div className="container hero__inner">
           <img src="/logo3d_final.jpg" alt="La CrocheterIA" className="hero__logo" width="960" height="627" />
           <span className="hero__badge">{t('home.heroBadge')}</span>
-          <h1 className="hero__title">
+          <h2 className="hero__title">
             {t('home.heroTitleLine1')}<br />{t('home.heroTitleLine2')}
-          </h1>
+          </h2>
           <p className="hero__subtitle">
             {t('home.heroSubtitle')}
           </p>
@@ -127,11 +132,12 @@ export default function Home() {
           </div>
           <div className="servicios-grid">
             {servicios.map(s => (
-              <div key={s.titulo} className={`servicio-card servicio-card--${s.acento}`}>
+              <Link key={s.titulo} to={s.to} className={`servicio-card servicio-card--${s.acento}`}>
                 <span className="servicio-card__icon">{s.icon}</span>
                 <h3>{s.titulo}</h3>
                 <p>{s.descripcion}</p>
-              </div>
+                <span className="servicio-card__ver">{t('home.servicioVer')}</span>
+              </Link>
             ))}
           </div>
         </div>

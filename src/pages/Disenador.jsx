@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { guardarProyecto } from '../lib/proyectos'
-import Seo from '../components/Seo'
+import Seo, { DOMINIO } from '../components/Seo'
 import './Disenador.css'
 
 const CELL = 36
@@ -593,7 +593,20 @@ export default function Disenador() {
 
   return (
     <div className="disenador">
-      <Seo titulo={t('seo.disenador.titulo')} descripcion={t('seo.disenador.descripcion')} />
+      <Seo
+        titulo={t('seo.disenador.titulo')}
+        descripcion={t('seo.disenador.descripcion')}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: t('disenador.titulo'),
+          url: `${DOMINIO}/disenador`,
+          description: t('seo.disenador.descripcion'),
+          applicationCategory: 'DesignApplication',
+          operatingSystem: 'Web',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+        }}
+      />
       <div className="disenador__header">
         <h1>{t('disenador.titulo')}</h1>
         <p>{t('disenador.subtitulo')}</p>
@@ -808,6 +821,34 @@ export default function Disenador() {
           </div>
         </div>
       </div>
+
+      {/* Texto explicativo: da a Google (y a quien llega) contexto sobre la herramienta. */}
+      <section className="disenador-info">
+        <div className="disenador-info__inner">
+          <h2>{t('disenador.infoTitulo')}</h2>
+          <p>{t('disenador.infoIntro')}</p>
+
+          <h2>{t('disenador.pasosTitulo')}</h2>
+          <ol className="disenador-info__pasos">
+            {t('disenador.pasos').map(paso => <li key={paso}>{paso}</li>)}
+          </ol>
+
+          <h2>{t('disenador.faqTitulo')}</h2>
+          <dl className="disenador-info__faq">
+            {t('disenador.faq').map(item => (
+              <div key={item.p}>
+                <dt>{item.p}</dt>
+                <dd>{item.r}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="disenador-info__cta">
+            <p>{t('disenador.ctaGeneradorTexto')}</p>
+            <Link to="/asistente" className="action-btn action-btn--primary">{t('disenador.ctaGeneradorBtn')}</Link>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
