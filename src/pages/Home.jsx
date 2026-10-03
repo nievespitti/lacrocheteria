@@ -86,9 +86,9 @@ export default function Home() {
   ]
 
   const servicios = [
-    { icon: '✦', titulo: t('home.servicio1Titulo'), descripcion: t('home.servicio1Desc'), acento: 'terracota' },
-    { icon: '◈', titulo: t('home.servicio2Titulo'), descripcion: t('home.servicio2Desc'), acento: 'sage' },
-    { icon: '❋', titulo: t('home.servicio3Titulo'), descripcion: t('home.servicio3Desc'), acento: 'linen' },
+    { icon: '✦', titulo: t('home.servicio1Titulo'), descripcion: t('home.servicio1Desc'), acento: 'terracota', to: '/asistente' },
+    { icon: '◈', titulo: t('home.servicio2Titulo'), descripcion: t('home.servicio2Desc'), acento: 'sage', to: '/disenador' },
+    { icon: '❋', titulo: t('home.servicio3Titulo'), descripcion: t('home.servicio3Desc'), acento: 'linen', to: '/aprender' },
   ]
 
   // Solo piezas con foto real (los títulos salen de galeriaProyectos, igual que en /galeria).
@@ -132,11 +132,12 @@ export default function Home() {
           </div>
           <div className="servicios-grid">
             {servicios.map(s => (
-              <div key={s.titulo} className={`servicio-card servicio-card--${s.acento}`}>
+              <Link key={s.titulo} to={s.to} className={`servicio-card servicio-card--${s.acento}`}>
                 <span className="servicio-card__icon">{s.icon}</span>
                 <h3>{s.titulo}</h3>
                 <p>{s.descripcion}</p>
-              </div>
+                <span className="servicio-card__ver">{t('home.servicioVer')}</span>
+              </Link>
             ))}
           </div>
         </div>

@@ -254,6 +254,22 @@
   margin: 0;
 }
 
+/* Las tarjetas son enlaces: sin subrayado ni color de enlace */
+a.servicio-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.servicio-card__ver {
+  display: inline-block;
+  margin-top: 18px;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
 .servicio-card--terracota { border-top-color: var(--color-accent); }
 .servicio-card--sage      { border-top-color: var(--color-sage); }
 .servicio-card--linen     { border-top-color: var(--color-linen); }
