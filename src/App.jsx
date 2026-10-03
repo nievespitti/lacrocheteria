@@ -17,6 +17,7 @@ import Registro from './pages/Registro'
 import AsistenteIA from './pages/AsistenteIA'
 import MisProyectos from './pages/MisProyectos'
 import Correcciones from './pages/Correcciones'
+import Generaciones from './pages/Generaciones'
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/asistente" element={<AsistenteIA />} />
               <Route path="/mis-proyectos" element={<MisProyectos />} />
               <Route path="/admin/correcciones" element={<Correcciones />} />
+              <Route path="/admin/generaciones" element={<Generaciones />} />
               <Route path="/login" element={<Login />} />
               <Route path="/registro" element={<Registro />} />
             </Routes>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useLanguage } from '../context/LanguageContext'
 import { listarCorrecciones, borrarCorreccion } from '../lib/correcciones'
@@ -98,6 +99,9 @@ export default function Correcciones() {
         <div className="container">
           <h1>{t('correcciones.heroTitulo')}</h1>
           <p>{t('correcciones.heroSubtitulo')}</p>
+          {esAdmin && (
+            <Link to="/admin/generaciones" className="correcciones-enlace-admin">{t('correcciones.verValoraciones')}</Link>
+          )}
         </div>
       </div>
 

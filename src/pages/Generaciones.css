@@ -1,0 +1,200 @@
+/* Panel interno de valoraciones (/admin/generaciones), solo para Nieves */
+
+.gen-enlace-admin {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.gen-periodo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.gen-periodo__btn {
+  padding: 8px 18px;
+  background: transparent;
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.gen-periodo__btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.gen-periodo__btn--activo,
+.gen-periodo__btn--activo:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+/* Cifras resumen */
+.gen-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.gen-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 20px;
+  background: #fff;
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+}
+
+.gen-stat--destacado {
+  border-color: var(--color-sage);
+}
+
+.gen-stat__valor {
+  font-family: var(--font-heading);
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--color-text);
+}
+
+.gen-stat--destacado .gen-stat__valor {
+  color: var(--color-sage);
+}
+
+.gen-stat__label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.gen-stat__nota {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.gen-titulo {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin: 0 0 16px;
+}
+
+/* Lista de patrones */
+.gen-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gen-item {
+  padding: 16px 20px;
+  background: #fff;
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+}
+
+.gen-item__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.gen-item__fecha {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.gen-item__etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gen-etiqueta {
+  padding: 3px 10px;
+  border-radius: 2px;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-linen);
+  color: var(--color-text-muted);
+}
+
+.gen-etiqueta--si {
+  background: var(--color-sage);
+  border-color: var(--color-sage);
+  color: #fff;
+}
+
+.gen-etiqueta--no {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+
+.gen-item__prompt {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.gen-item__comentario {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+.gen-nota {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0 0 16px;
+}
+
+.gen-titulo + .gen-nota {
+  margin-top: -8px;
+}
+
+.gen-lista + .gen-nota,
+.gen-nota + .gen-titulo,
+.gen-lista + .gen-titulo {
+  margin-top: 40px;
+}
+
+.gen-abuso {
+  padding-left: 20px;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+@media (max-width: 900px) {
+  .gen-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gen-stats {
+    grid-template-columns: 1fr;
+  }
+}
