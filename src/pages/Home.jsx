@@ -57,6 +57,9 @@ function GeneradorRapido() {
             <span className="generador-rapido__nota">{t('home.generadorNota')}</span>
           </div>
         </form>
+        <p className="generador-rapido__alternativa">
+          <Link to="/disenador">{t('home.disenadorLink')}</Link>
+        </p>
       </div>
     </section>
   )

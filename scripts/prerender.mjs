@@ -61,7 +61,7 @@ const rutasEstaticas = [
   { ruta: '/asistente', changefreq: 'weekly', priority: '0.9' },
   { ruta: '/galeria', changefreq: 'weekly', priority: '0.8' },
   { ruta: '/aprender', changefreq: 'monthly', priority: '0.8' },
-  { ruta: '/disenador', changefreq: 'monthly', priority: '0.6' },
+  { ruta: '/disenador', changefreq: 'monthly', priority: '0.8' },
   { ruta: '/sobre-nosotras', changefreq: 'monthly', priority: '0.5' },
   { ruta: '/contacto', changefreq: 'monthly', priority: '0.5' },
 ]

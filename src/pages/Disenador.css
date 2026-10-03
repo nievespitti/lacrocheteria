@@ -453,6 +453,85 @@
 }
 
 /* RESPONSIVE */
+/* TEXTO EXPLICATIVO (debajo de la herramienta) */
+.disenador-info {
+  margin-top: 64px;
+  padding-top: 48px;
+  border-top: 2px solid var(--color-linen);
+}
+
+.disenador-info__inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.disenador-info h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 400;
+  color: var(--color-text);
+  margin: 36px 0 12px;
+}
+
+.disenador-info h2:first-child {
+  margin-top: 0;
+}
+
+.disenador-info p,
+.disenador-info li,
+.disenador-info dd {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.disenador-info__pasos {
+  padding-left: 22px;
+  margin: 0;
+}
+
+.disenador-info__pasos li {
+  margin-bottom: 8px;
+}
+
+.disenador-info__pasos li::marker {
+  color: var(--color-accent);
+}
+
+.disenador-info__faq {
+  margin: 0;
+}
+
+.disenador-info__faq dt {
+  font-weight: 500;
+  color: var(--color-text);
+  margin-top: 16px;
+}
+
+.disenador-info__faq dd {
+  margin: 4px 0 0;
+}
+
+.disenador-info__cta {
+  margin-top: 40px;
+  padding: 28px;
+  background: #fff;
+  border: 2px solid var(--color-linen);
+  border-radius: 2px;
+  text-align: center;
+}
+
+.disenador-info__cta p {
+  margin: 0 0 16px;
+  color: var(--color-text);
+}
+
+.disenador-info__cta .action-btn {
+  display: inline-block;
+  width: auto;
+  text-decoration: none;
+}
+
 @media (max-width: 900px) {
   .disenador__layout {
     flex-direction: column;

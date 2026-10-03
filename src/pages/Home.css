@@ -130,6 +130,22 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+.generador-rapido__alternativa {
+  margin: 28px 0 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.generador-rapido__alternativa a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.generador-rapido__alternativa a:hover {
+  text-decoration-thickness: 2px;
+}
+
 /* === HERO === */
 .hero {
   display: flex;
