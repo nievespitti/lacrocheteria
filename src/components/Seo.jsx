@@ -1,7 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import { useLocation } from 'react-router-dom'
 
-export const DOMINIO = 'https://lacrocheteria.com'
+// Dominio principal: Vercel sirve la web en www y redirige lacrocheteria.com → www.
+// Canonical, og:url, sitemap y robots deben usar este mismo (ver scripts/prerender.mjs).
+export const DOMINIO = 'https://www.lacrocheteria.com'
 const IMAGEN_OG_DEFECTO = `${DOMINIO}/logo3d_final.jpg`
 
 export default function Seo({ titulo, descripcion, noindex = false, imagen = IMAGEN_OG_DEFECTO, jsonLd }) {

@@ -24,7 +24,9 @@ function GeneradorRapido() {
     <section className="generador-rapido">
       <div className="container generador-rapido__inner">
         <span className="generador-rapido__eyebrow">{t('home.generadorEyebrow')}</span>
-        <h2 className="generador-rapido__titulo">{t('home.generadorTitulo')}</h2>
+        {/* Único h1 de la Home, con palabra clave ("patrones de crochet") para SEO. */}
+        <h1 className="generador-rapido__titulo">{t('home.generadorTitulo')}</h1>
+        <p className="generador-rapido__pregunta">{t('home.generadorPregunta')}</p>
         <form className="generador-rapido__form" onSubmit={enviar}>
           <textarea
             className="generador-rapido__campo"
@@ -105,9 +107,9 @@ export default function Home() {
         <div className="container hero__inner">
           <img src="/logo3d_final.jpg" alt="La CrocheterIA" className="hero__logo" width="960" height="627" />
           <span className="hero__badge">{t('home.heroBadge')}</span>
-          <h1 className="hero__title">
+          <h2 className="hero__title">
             {t('home.heroTitleLine1')}<br />{t('home.heroTitleLine2')}
-          </h1>
+          </h2>
           <p className="hero__subtitle">
             {t('home.heroSubtitle')}
           </p>

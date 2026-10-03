@@ -4,4 +4,4 @@ Disallow: /registro
 Disallow: /mis-proyectos
 Disallow: /admin/
 
-Sitemap: https://lacrocheteria.com/sitemap.xml
+Sitemap: https://www.lacrocheteria.com/sitemap.xml
