@@ -62,15 +62,6 @@ export default function Header() {
               <span className="header__link-label">{link.label}</span>
             </NavLink>
           ))}
-          <a
-            href="https://notebooklm.google.com/notebook/6deea074-1085-4244-9369-25dc95addbef"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="header__biblia-btn"
-            onClick={closeMenu}
-          >
-            {t('header.biblia')}
-          </a>
 
           <div className="header__lang">
             <button

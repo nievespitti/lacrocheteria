@@ -81,7 +81,6 @@ export const translations = {
       contacto: 'Contacto',
       misProyectos: '☆ Mis Proyectos',
       correcciones: '◈ Correcciones',
-      biblia: '📖 Biblia del Crochet',
       entrar: 'Entrar',
       salir: 'Salir',
       abrirMenu: 'Abrir menú',
@@ -94,7 +93,7 @@ export const translations = {
       copyright: 'La CrocheterIA · Tejido con amor y mucho ganchillo.',
     },
     home: {
-      heroBadge: '✨ Ganchillo + Inteligencia Artificial',
+      heroBadge: '✦ Ganchillo + Inteligencia Artificial',
       heroTitleLine1: 'Crochet moderno',
       heroTitleLine2: 'con alma artesanal',
       heroSubtitle: 'Patrones exclusivos, tutoriales en profundidad y un asistente de IA para acompañarte en cada punto. Bienvenida a tu nuevo rincón de ganchillo.',
@@ -437,7 +436,6 @@ export const translations = {
       contacto: 'Contact',
       misProyectos: '☆ My Projects',
       correcciones: '◈ Corrections',
-      biblia: '📖 Crochet Bible',
       entrar: 'Log in',
       salir: 'Log out',
       abrirMenu: 'Open menu',
@@ -450,7 +448,7 @@ export const translations = {
       copyright: 'La CrocheterIA · Crocheted with love and lots of yarn.',
     },
     home: {
-      heroBadge: '✨ Crochet + Artificial Intelligence',
+      heroBadge: '✦ Crochet + Artificial Intelligence',
       heroTitleLine1: 'Modern crochet',
       heroTitleLine2: 'with handmade soul',
       heroSubtitle: 'Exclusive patterns, in-depth tutorials and an AI assistant to guide you through every stitch. Welcome to your new crochet corner.',
